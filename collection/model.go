@@ -3,8 +3,9 @@ package collection
 import "database/sql"
 
 type Collection struct {
-	id          int
-	name        string
-	created_at  string
-	description sql.NullString
+	ID          int
+	Name        string
+	Created_at  string
+	Updated_at  string
+	Description sql.NullString
 }

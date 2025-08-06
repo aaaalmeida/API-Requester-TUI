@@ -3,7 +3,6 @@ package db
 import (
 	"database/sql"
 	"os"
-	"strings"
 )
 
 func InitSchema(db *sql.DB, path string) error {
@@ -13,16 +12,12 @@ func InitSchema(db *sql.DB, path string) error {
 		return err
 	}
 
-	// split sql into commands
-	commands := strings.Split(string(content), ";")
+	// sqlite separates instructions alone
+	sql := string(content)
+	_, err = db.Exec(sql)
 
-	// execute each command
-	for _, cmd := range commands {
-		cmd = strings.TrimSpace(cmd)
-		_, err := db.Exec(cmd)
-		if err != nil {
-			return err
-		}
+	if err != nil {
+		return err
 	}
 
 	return nil

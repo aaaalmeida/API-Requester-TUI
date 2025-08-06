@@ -18,30 +18,29 @@ func GetAllCollection(ctx *appctx.AppContext) ([]Collection, error) {
 	var collections []Collection
 
 	for rows.Next() {
-		var c Collection
-		// copy row into c variable
-		err := rows.Scan(&c.id, &c.name, &c.created_at, &c.description)
+		var collec Collection
+		// copy row into collec variable
+		err := rows.Scan(&collec.ID, &collec.Name, &collec.Created_at, &collec.Description)
 		if err != nil {
 			return nil, err
 		}
 
-		// add c into collections
-		collections = append(collections, c)
+		// add collec into collections
+		collections = append(collections, collec)
 	}
 
 	return collections, nil
 }
 
 func AddCollection(ctx *appctx.AppContext, name string, description *string) (*Collection, error) {
-	// prepared statment
-	// secure against sql injection
+	// prepared statment, secure against sql injection
 	stmt, err := ctx.DB.Prepare("INSERT INTO collection (name, description) VALUES (?, ?)")
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	// description can be null
+	// go doesnt allow strings to be null, so I must use a pointer to string
 	var desc sql.NullString
 	if description != nil {
 		desc = sql.NullString{String: *description, Valid: true}
@@ -60,9 +59,9 @@ func AddCollection(ctx *appctx.AppContext, name string, description *string) (*C
 	}
 
 	return &Collection{
-		id:          int(lastId),
-		name:        name,
-		created_at:  time.Now().String(),
-		description: desc,
+		ID:          int(lastId),
+		Name:        name,
+		Created_at:  time.Now().String(),
+		Description: desc,
 	}, nil
 }
