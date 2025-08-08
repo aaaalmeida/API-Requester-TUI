@@ -4,12 +4,15 @@ import (
 	"api-requester/appctx"
 	"database/sql"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
 	"time"
 )
 
+// TODO: documentar
 func AddRequest(ctx *appctx.AppContext, name, url string,
 	method_id, collection_id int,
 	status_codePointer *int,
@@ -37,6 +40,7 @@ func AddRequest(ctx *appctx.AppContext, name, url string,
 	} else {
 		headers = sql.NullString{Valid: false}
 	}
+
 	if bodyPointer != nil {
 		body = sql.NullString{Valid: true, String: *bodyPointer}
 	} else {
@@ -67,8 +71,8 @@ func AddRequest(ctx *appctx.AppContext, name, url string,
 	}, nil
 }
 
+// TODO: documentar
 func GetAllRequest(ctx *appctx.AppContext) ([]Request, error) {
-	// FIXME: possivel erro qnd query puxa todos dados
 	rows, err := ctx.DB.Query("SELECT * FROM request;")
 	if err != nil {
 		return nil, err
@@ -98,6 +102,7 @@ func GetAllRequest(ctx *appctx.AppContext) ([]Request, error) {
 	return requests, nil
 }
 
+// TODO: documentar
 func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, error) {
 	rows, err := ctx.DB.Query(`
 		SELECT name, url, method_id, collection_id, status_code, headers, body
@@ -131,6 +136,7 @@ func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, 
 	return requests, nil
 }
 
+// TODO: documentar
 func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error) {
 	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id, status_code, headers, body
 	 FROM request WHERE id = ?;`, request_id)
@@ -153,9 +159,86 @@ func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error)
 	return &request, nil
 }
 
-// TODO:
-// func UpdateRequest(ctx *appctx.AppContext){}
+// TODO: remover referencia do ponteiro da lista de requests durante execução
+// TODO: documentar
+func DeleteRequestById(ctx *appctx.AppContext, request_id int) error {
+	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
+	if err != nil {
+		return err
+	}
 
+	defer stmt.Close()
+
+	res, err := stmt.Exec(request_id)
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected, err := res.RowsAffected(); err != nil {
+		if rowsAffected != 1 {
+			return errors.New("Error: Request not deleted.")
+		}
+		return err
+	}
+
+	return nil
+}
+
+/*
+*	Update and saves request in db. This DOES NOT override original values, only replaces new ones.
+*	NEVER pass ID, Collection_ID, Created_at and Updated_at as arguments because this
+*	function is not mean to update then manually. Updated_at is automatic updated to local date time.
+ */
+func UpdateRequest(ctx *appctx.AppContext, request_id int, request *Request) error {
+	queryClauses := []string{}
+	args := []interface{}{}
+
+	if request.Name != "" {
+		queryClauses = append(queryClauses, "name = ?")
+		args = append(args, request.Name)
+	}
+
+	if request.Url != "" {
+		queryClauses = append(queryClauses, "url = ?")
+		args = append(args, request.Url)
+	}
+
+	if request.Method_id != 0 {
+		queryClauses = append(queryClauses, "method_id = ?")
+		args = append(args, request.Method_id)
+	}
+
+	if request.Status_code.Valid {
+		queryClauses = append(queryClauses, "status_code = ?")
+		args = append(args, request.Status_code.Int16)
+	}
+
+	if request.Headers.Valid {
+		queryClauses = append(queryClauses, "headers = ?")
+		args = append(args, request.Headers.String)
+	}
+
+	if request.Body.Valid {
+		queryClauses = append(queryClauses, "body = ?")
+		args = append(args, request.Body.String)
+	}
+
+	if len(queryClauses) == 0 {
+		return fmt.Errorf("nothing to update")
+	}
+
+	queryClauses = append(queryClauses, "updated_at = ?")
+	args = append(args, time.Now().Format(time.DateTime))
+
+	query := fmt.Sprintf("UPDATE request SET %s WHERE id = ?;", strings.Join(queryClauses, ", "))
+	args = append(args, request_id)
+	_, err := ctx.DB.Exec(query, args...)
+	return err
+}
+
+/*
+*	Call HTTP Request using Headers (if valid). Returns body stringified.
+ */
 func CallRequest(req *Request) (string, error) {
 	// create request body if it is valid
 	var body = strings.NewReader("")
@@ -163,7 +246,6 @@ func CallRequest(req *Request) (string, error) {
 		body = strings.NewReader(req.Body.String)
 	}
 
-	// create method
 	method := http.MethodGet
 	switch req.Method_id {
 	case 2:
@@ -212,5 +294,6 @@ func CallRequest(req *Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	return string(responseBody), nil
 }

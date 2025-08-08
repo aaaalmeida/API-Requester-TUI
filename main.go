@@ -28,22 +28,12 @@ func main() {
 	// global context
 	ctx := appctx.NewAppContext(dbConnection)
 
-	req, err := request.SearchRequestById(ctx, 3)
+	requests, err := request.GetAllRequest(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
-	request.CallRequest(req)
-	// reqs, err := request.GetAllRequest(ctx)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 
-	// for i, req := range reqs {
-	// 	response, err := request.CallRequest(&req)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-
-	// 	fmt.Println(i, response)
-	// }
+	for _, i := range requests {
+		fmt.Println(i.Name, i.Url, i.Headers, i.Body, i.Method_id)
+	}
 }
