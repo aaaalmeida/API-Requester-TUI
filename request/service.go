@@ -3,12 +3,11 @@ package request
 import (
 	"api-requester/appctx"
 	"database/sql"
-	"fmt"
+	"encoding/json"
+	"io"
+	"net/http"
+	"strings"
 	"time"
-	// "bytes"
-	// "fmt"
-	// "net/http"
-	// "strings"
 )
 
 func AddRequest(ctx *appctx.AppContext, name, url string,
@@ -42,10 +41,6 @@ func AddRequest(ctx *appctx.AppContext, name, url string,
 		body = sql.NullString{Valid: true, String: *bodyPointer}
 	} else {
 		body = sql.NullString{Valid: false}
-	}
-
-	if err != nil {
-		return nil, err
 	}
 
 	result, err := stmt.Exec(name, url, method_id, collection_id, status_code, headers, body)
@@ -117,14 +112,16 @@ func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, 
 	var requests []Request
 	for rows.Next() {
 		var req Request
-		err := rows.Scan(&req.ID,
+		err := rows.Scan(
+			&req.ID,
 			&req.Name,
 			&req.Url,
 			&req.Method_id,
 			&req.Collection_id,
 			&req.Status_code,
 			&req.Headers,
-			&req.Body)
+			&req.Body,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -134,46 +131,86 @@ func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, 
 	return requests, nil
 }
 
+func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error) {
+	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id, status_code, headers, body
+	 FROM request WHERE id = ?;`, request_id)
+
+	var request Request
+	err := row.Scan(
+		&request.ID,
+		&request.Name,
+		&request.Url,
+		&request.Method_id,
+		&request.Collection_id,
+		&request.Status_code,
+		&request.Headers,
+		&request.Body,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	return &request, nil
+}
+
 // TODO:
 // func UpdateRequest(ctx *appctx.AppContext){}
 
-func CallRequest(req *Request) {
+func CallRequest(req *Request) (string, error) {
 	// create request body if it is valid
-	// var body *strings.Reader
-	// if req.Body.Valid {
-	// 	body = strings.NewReader(req.Body.String)
-	// }else {
-	// 	body = strings.NewReader("")
-	// }
+	var body = strings.NewReader("")
+	if req.Body.Valid {
+		body = strings.NewReader(req.Body.String)
+	}
 
-	// var method string
-	// switch req.Method_id {
-	// 	case 1:
-	// 		method = http.MethodGet
-	// 	case 2:
-	// 		method = http.MethodPost
-	// 	case 3:
-	// 		method = http.MethodPut
-	// 	case 4:
-	// 		method = http.MethodDelete
-	// 	case 5:
-	// 		method = http.MethodPatch
-	// 	case 6:
-	// 		method = http.MethodHead
-	// 	case 7:
-	// 		method = http.MethodTrace
-	// }
+	// create method
+	method := http.MethodGet
+	switch req.Method_id {
+	case 2:
+		method = http.MethodPost
+	case 3:
+		method = http.MethodPut
+	case 4:
+		method = http.MethodDelete
+	case 5:
+		method = http.MethodPatch
+	case 6:
+		method = http.MethodHead
+	case 7:
+		method = http.MethodTrace
+	}
 
-	// httpRequest, err := http.NewRequest(method, req.Url, body)
-	// if err != nil {
-	// 	return "", err
-	// }
+	httpRequest, err := http.NewRequest(method, req.Url, body)
+	if err != nil {
+		return "", err
+	}
 
-	// httpRequest.Header.Set()
+	if req.Body.Valid {
+		httpRequest.Header.Set("Content-type", "application/json")
+	}
 
-	fmt.Printf("name %s\n", req.Name)
-	fmt.Printf("url %s\n", req.Url)
-	fmt.Printf("status %d\n", req.Status_code.Int16)
-	fmt.Printf("header %s\n", req.Headers.String)
-	fmt.Printf("body %s\n\n", req.Body.String)
+	// set request headers if valid
+	if req.Headers.Valid {
+		var headersMap map[string]string
+		if err := json.Unmarshal([]byte(req.Headers.String), &headersMap); err != nil {
+			return "", err
+		}
+
+		for key, value := range headersMap {
+			httpRequest.Header.Set(key, value)
+		}
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(httpRequest)
+	if err != nil {
+		return "", err
+	}
+	defer response.Body.Close()
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+	return string(responseBody), nil
 }
