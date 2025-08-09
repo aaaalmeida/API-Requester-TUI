@@ -10,9 +10,11 @@
 * [X] Save request in db
 * [X] Update request headers
 * [X] Allow request body
-* [ ] Copy request response (stout/file)
+* [ ] Copy requisition response (stout/file)
+* [ ] TUI
 * [ ] Responsive design
 * [ ] Allow request authentication
 * [ ] Allow cookies
-* [ ] Document code
+* [X] Document code
 * [ ] Create a readme
+* [ ] Error managment

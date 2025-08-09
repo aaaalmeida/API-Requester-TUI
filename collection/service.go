@@ -8,6 +8,9 @@ import (
 	"time"
 )
 
+/*
+*	Return array of all collections.
+ */
 func GetAllCollection(ctx *appctx.AppContext) ([]Collection, error) {
 	rows, err := ctx.DB.Query("SELECT id, name, created_at, updated_at, description FROM collection")
 
@@ -32,6 +35,10 @@ func GetAllCollection(ctx *appctx.AppContext) ([]Collection, error) {
 	return collections, nil
 }
 
+/*
+*	Create and add collection to database. Created_at and Updated_at automatically set to
+*	local date time. Returns pointer to created collection.
+ */
 func AddCollection(ctx *appctx.AppContext, name string, description *string) (*Collection, error) {
 	// prepared statment, secure against sql injection
 	stmt, err := ctx.DB.Prepare("INSERT INTO collection (name, description) VALUES (?, ?)")
@@ -66,6 +73,11 @@ func AddCollection(ctx *appctx.AppContext, name string, description *string) (*C
 	}, nil
 }
 
+/*
+*	Update and saves collection in db. This DOES NOT uninformed values, only replaces new ones.
+*	ID, Created_at and Updated_at will be ignored because this function is not mean
+*	to update then manually. Updated_at is automatic updated to local date time.
+ */
 func UpdateCollection(ctx *appctx.AppContext, collection_id int, collection *Collection) error {
 	queryClauses := []string{}
 	args := []interface{}{}
@@ -90,5 +102,19 @@ func UpdateCollection(ctx *appctx.AppContext, collection_id int, collection *Col
 	query := fmt.Sprintf("UPDATE collection SET %s WHERE id = ?;", strings.Join(queryClauses, ", "))
 	args = append(args, collection_id)
 	_, err := ctx.DB.Exec(query, args...)
+	return err
+}
+
+/*
+*	Delete collection with matching id from database.
+ */
+func DeleteCollectionById(ctx *appctx.AppContext, collection_id int) error {
+	stmt, err := ctx.DB.Prepare("DELETE FROM collection WHERE id = ?;")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(collection_id)
 	return err
 }

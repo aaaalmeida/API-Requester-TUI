@@ -4,7 +4,6 @@ import (
 	"api-requester/appctx"
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -12,7 +11,11 @@ import (
 	"time"
 )
 
-// TODO: documentar
+/**
+* 	Create and insert request into database. Status_code, headers and body are optional and can
+*	be pass as nil. Created_at and updated_at are automatically set as local date time.
+*	Returns pointer to created request.
+ */
 func AddRequest(ctx *appctx.AppContext, name, url string,
 	method_id, collection_id int,
 	status_codePointer *int,
@@ -71,7 +74,9 @@ func AddRequest(ctx *appctx.AppContext, name, url string,
 	}, nil
 }
 
-// TODO: documentar
+/*
+*	Return array of all requests.
+ */
 func GetAllRequest(ctx *appctx.AppContext) ([]Request, error) {
 	rows, err := ctx.DB.Query("SELECT * FROM request;")
 	if err != nil {
@@ -102,7 +107,9 @@ func GetAllRequest(ctx *appctx.AppContext) ([]Request, error) {
 	return requests, nil
 }
 
-// TODO: documentar
+/*
+*	Return array of all requests with matching method_id.
+ */
 func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, error) {
 	rows, err := ctx.DB.Query(`
 		SELECT name, url, method_id, collection_id, status_code, headers, body
@@ -136,7 +143,9 @@ func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, 
 	return requests, nil
 }
 
-// TODO: documentar
+/*
+*	Return request with matching id or ErrNoRows if not found.
+ */
 func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error) {
 	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id, status_code, headers, body
 	 FROM request WHERE id = ?;`, request_id)
@@ -160,7 +169,9 @@ func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error)
 }
 
 // TODO: remover referencia do ponteiro da lista de requests durante execução
-// TODO: documentar
+/*
+*	Delete request with matching id from database.
+ */
 func DeleteRequestById(ctx *appctx.AppContext, request_id int) error {
 	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
 	if err != nil {
@@ -169,25 +180,14 @@ func DeleteRequestById(ctx *appctx.AppContext, request_id int) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.Exec(request_id)
-	if err != nil {
-		return err
-	}
-
-	if rowsAffected, err := res.RowsAffected(); err != nil {
-		if rowsAffected != 1 {
-			return errors.New("Error: Request not deleted.")
-		}
-		return err
-	}
-
-	return nil
+	_, err = stmt.Exec(request_id)
+	return err
 }
 
 /*
-*	Update and saves request in db. This DOES NOT override original values, only replaces new ones.
-*	NEVER pass ID, Collection_ID, Created_at and Updated_at as arguments because this
-*	function is not mean to update then manually. Updated_at is automatic updated to local date time.
+*	Update and saves request in db. This DOES NOT override uninformed values, only replaces new ones.
+*	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
+*	to update then manually. Updated_at is automatic updated to local date time.
  */
 func UpdateRequest(ctx *appctx.AppContext, request_id int, request *Request) error {
 	queryClauses := []string{}
@@ -267,6 +267,7 @@ func CallRequest(req *Request) (string, error) {
 		return "", err
 	}
 
+	// TODO: depois que implementar a TUI, remover esse header
 	if req.Body.Valid {
 		httpRequest.Header.Set("Content-type", "application/json")
 	}
@@ -296,4 +297,30 @@ func CallRequest(req *Request) (string, error) {
 	}
 
 	return string(responseBody), nil
+}
+
+/*
+*	Call HTTP Request with matching id. Returns body stringified.
+ */
+func CallRequestById(ctx *appctx.AppContext, request_id int) (string, error) {
+	row := ctx.DB.QueryRow("SELECT * FROM request WHERE id = ?;", request_id)
+
+	var request Request
+	err := row.Scan(
+		&request.ID,
+		&request.Url,
+		&request.Name,
+		&request.Method_id,
+		&request.Collection_id,
+		&request.Status_code,
+		&request.Headers,
+		&request.Body,
+		&request.Created_at,
+		&request.Updated_at)
+
+	if err != nil {
+		return "", err
+	}
+
+	return CallRequest(&request)
 }
