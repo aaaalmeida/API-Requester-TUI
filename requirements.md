@@ -18,3 +18,4 @@
 * [X] Document code
 * [ ] Create a readme
 * [ ] Error managment
+* [ ] Create a config dotfile where I can adjust font size, colors, styles, components position ...

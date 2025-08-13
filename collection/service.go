@@ -1,7 +1,7 @@
 package collection
 
 import (
-	"api-requester/appctx"
+	"api-requester/context"
 	"database/sql"
 	"fmt"
 	"strings"
@@ -11,7 +11,7 @@ import (
 /*
 *	Return array of all collections.
  */
-func GetAllCollection(ctx *appctx.AppContext) ([]Collection, error) {
+func GetAllCollection(ctx *context.AppContext) ([]Collection, error) {
 	rows, err := ctx.DB.Query("SELECT id, name, created_at, updated_at, description FROM collection")
 
 	if err != nil {
@@ -39,7 +39,7 @@ func GetAllCollection(ctx *appctx.AppContext) ([]Collection, error) {
 *	Create and add collection to database. Created_at and Updated_at automatically set to
 *	local date time. Returns pointer to created collection.
  */
-func AddCollection(ctx *appctx.AppContext, name string, description *string) (*Collection, error) {
+func AddCollection(ctx *context.AppContext, name string, description *string) (*Collection, error) {
 	// prepared statment, secure against sql injection
 	stmt, err := ctx.DB.Prepare("INSERT INTO collection (name, description) VALUES (?, ?)")
 	if err != nil {
@@ -78,7 +78,7 @@ func AddCollection(ctx *appctx.AppContext, name string, description *string) (*C
 *	ID, Created_at and Updated_at will be ignored because this function is not mean
 *	to update then manually. Updated_at is automatic updated to local date time.
  */
-func UpdateCollection(ctx *appctx.AppContext, collection_id int, collection *Collection) error {
+func UpdateCollection(ctx *context.AppContext, collection_id int, collection *Collection) error {
 	queryClauses := []string{}
 	args := []interface{}{}
 
@@ -108,7 +108,7 @@ func UpdateCollection(ctx *appctx.AppContext, collection_id int, collection *Col
 /*
 *	Delete collection with matching id from database.
  */
-func DeleteCollectionById(ctx *appctx.AppContext, collection_id int) error {
+func DeleteCollectionById(ctx *context.AppContext, collection_id int) error {
 	stmt, err := ctx.DB.Prepare("DELETE FROM collection WHERE id = ?;")
 	if err != nil {
 		return err
@@ -117,4 +117,24 @@ func DeleteCollectionById(ctx *appctx.AppContext, collection_id int) error {
 
 	_, err = stmt.Exec(collection_id)
 	return err
+}
+
+/*
+*	Return collection with matching id or ErrNoRows if not found.
+ */
+func SearchCollectionById(ctx *context.AppContext, collection_id int) (*Collection, error) {
+	row := ctx.DB.QueryRow("SELECT * FROM collection WHERE id = ?;", collection_id)
+	var collection Collection
+	err := row.Scan(
+		&collection.ID,
+		&collection.Name,
+		&collection.Created_at,
+		&collection.Updated_at,
+		&collection.Description)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &collection, nil
 }

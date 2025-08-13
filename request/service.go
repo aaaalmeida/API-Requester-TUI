@@ -1,7 +1,7 @@
 package request
 
 import (
-	"api-requester/appctx"
+	"api-requester/context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -16,7 +16,7 @@ import (
 *	be pass as nil. Created_at and updated_at are automatically set as local date time.
 *	Returns pointer to created request.
  */
-func AddRequest(ctx *appctx.AppContext, name, url string,
+func AddRequest(ctx *context.AppContext, name, url string,
 	method_id, collection_id int,
 	status_codePointer *int,
 	headersPointer, bodyPointer *string) (*Request, error) {
@@ -77,7 +77,7 @@ func AddRequest(ctx *appctx.AppContext, name, url string,
 /*
 *	Return array of all requests.
  */
-func GetAllRequest(ctx *appctx.AppContext) ([]Request, error) {
+func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
 	rows, err := ctx.DB.Query("SELECT * FROM request;")
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func GetAllRequest(ctx *appctx.AppContext) ([]Request, error) {
 /*
 *	Return array of all requests with matching method_id.
  */
-func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, error) {
+func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request, error) {
 	rows, err := ctx.DB.Query(`
 		SELECT name, url, method_id, collection_id, status_code, headers, body
 		FROM request WHERE method_id = ?;`,
@@ -146,7 +146,7 @@ func SearchRequestByMethodId(ctx *appctx.AppContext, method_id int) ([]Request, 
 /*
 *	Return request with matching id or ErrNoRows if not found.
  */
-func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error) {
+func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error) {
 	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id, status_code, headers, body
 	 FROM request WHERE id = ?;`, request_id)
 
@@ -172,7 +172,7 @@ func SearchRequestById(ctx *appctx.AppContext, request_id int) (*Request, error)
 /*
 *	Delete request with matching id from database.
  */
-func DeleteRequestById(ctx *appctx.AppContext, request_id int) error {
+func DeleteRequestById(ctx *context.AppContext, request_id int) error {
 	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
 	if err != nil {
 		return err
@@ -189,7 +189,7 @@ func DeleteRequestById(ctx *appctx.AppContext, request_id int) error {
 *	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
 *	to update then manually. Updated_at is automatic updated to local date time.
  */
-func UpdateRequest(ctx *appctx.AppContext, request_id int, request *Request) error {
+func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) error {
 	queryClauses := []string{}
 	args := []interface{}{}
 
@@ -302,7 +302,7 @@ func CallRequest(req *Request) (string, error) {
 /*
 *	Call HTTP Request with matching id. Returns body stringified.
  */
-func CallRequestById(ctx *appctx.AppContext, request_id int) (string, error) {
+func CallRequestById(ctx *context.AppContext, request_id int) (string, error) {
 	row := ctx.DB.QueryRow("SELECT * FROM request WHERE id = ?;", request_id)
 
 	var request Request

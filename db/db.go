@@ -5,9 +5,12 @@ import (
 	"os"
 )
 
-func InitSchema(db *sql.DB, path string) error {
+const DB_NAME string = "mydb.sqlite"
+const SCHEMA string = "db/schema.sql"
+
+func InitSchema(db *sql.DB) error {
 	// read schema.sql
-	content, err := os.ReadFile(path)
+	content, err := os.ReadFile(SCHEMA)
 	if err != nil {
 		return err
 	}
@@ -21,4 +24,8 @@ func InitSchema(db *sql.DB, path string) error {
 	}
 
 	return nil
+}
+
+func Connect() (*sql.DB, error) {
+	return sql.Open("sqlite3", DB_NAME)
 }
