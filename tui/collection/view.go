@@ -2,35 +2,42 @@ package collection
 
 import (
 	"api-requester/utils"
-	"strings"
+	"strconv"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/tree"
 )
 
 // TODO: add style configuration
 func (m CollectionModel) View() string {
-	var response strings.Builder
-
-	containerBoxStyle := lipgloss.NewStyle().
-		Border(lipgloss.ThickBorder()).
-		MaxWidth(m.Width).Padding(m.Padding).
-		Height(m.Height)
-
 	selectedCollection := lipgloss.NewStyle().Bold(true).
 		Background(lipgloss.Color(m.Focus_Color))
-
 	normalCollection := lipgloss.NewStyle()
 
+	t := tree.New()
 	for i, col := range m.Collections {
-		string := utils.Truncate(col.Name, m.Width)
+		colName := utils.Truncate(col.Name, 20)
 
+		var subTree *tree.Tree
 		if i == m.Cursor {
-			response.WriteString(selectedCollection.Render(string))
+			subTree = t.Child(selectedCollection.Render(colName))
 		} else {
-			response.WriteString(normalCollection.Render(string))
+			subTree = t.Child(normalCollection.Render(colName))
 		}
-		response.WriteRune('\n')
+
+		// only loads fetched collections
+		if len(col.Requests) > 0 {
+			for _, r := range col.Requests {
+				subTree.Child(tree.New().Child(
+					utils.Truncate(
+						utils.Concatenate(strconv.Itoa(r.Method_id), r.Name), 20)))
+			}
+		}
 	}
 
-	return containerBoxStyle.Render(response.String())
+	containerBoxStyle := lipgloss.NewStyle().
+		Height(m.Height).Width(m.Width).Padding(m.Padding).
+		Border(lipgloss.ThickBorder())
+
+	return containerBoxStyle.Render(t.String())
 }

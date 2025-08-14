@@ -3,7 +3,7 @@
 * [X] Update collections
 * [X] Rename collections
 * [X] Add collection description
-* [ ] Delete collections
+* [X] Delete collections
 * [X] Create request
 * [X] Associate request to collection
 * [X] Send request
@@ -12,10 +12,16 @@
 * [X] Allow request body
 * [ ] Copy requisition response (stout/file)
 * [ ] TUI
+* [X] TUI - Collection box
+* [ ] TUI - Collection box should use a tree instead of list
+* [ ] TUI - Request Box
+* [ ] TUI - Response Box
+* [ ] TUI - Command visualizer
+* [ ] TUI - Help cheat sheet
 * [ ] Responsive design
 * [ ] Allow request authentication
 * [ ] Allow cookies
-* [X] Document code
+* [ ] Document code
 * [ ] Create a readme
 * [ ] Error managment
 * [ ] Create a config dotfile where I can adjust font size, colors, styles, components position ...

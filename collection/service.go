@@ -12,7 +12,7 @@ import (
 *	Return array of all collections.
  */
 func GetAllCollection(ctx *context.AppContext) ([]Collection, error) {
-	rows, err := ctx.DB.Query("SELECT id, name, created_at, updated_at, description FROM collection")
+	rows, err := ctx.DB.Query("SELECT * FROM collection")
 
 	if err != nil {
 		return nil, err
@@ -24,7 +24,12 @@ func GetAllCollection(ctx *context.AppContext) ([]Collection, error) {
 
 	for rows.Next() {
 		var collec Collection
-		err := rows.Scan(&collec.ID, &collec.Name, &collec.Created_at, &collec.Updated_at, &collec.Description)
+		err := rows.Scan(
+			&collec.ID,
+			&collec.Name,
+			&collec.Created_at,
+			&collec.Updated_at,
+			&collec.Description)
 		if err != nil {
 			return nil, err
 		}
@@ -69,7 +74,9 @@ func AddCollection(ctx *context.AppContext, name string, description *string) (*
 		ID:          int(lastId),
 		Name:        name,
 		Created_at:  time.Now().String(),
+		Updated_at:  time.Now().String(),
 		Description: desc,
+		Requests:    nil,
 	}, nil
 }
 

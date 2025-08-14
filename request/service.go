@@ -112,8 +112,7 @@ func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
  */
 func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request, error) {
 	rows, err := ctx.DB.Query(`
-		SELECT name, url, method_id, collection_id, status_code, headers, body
-		FROM request WHERE method_id = ?;`,
+		SELECT * FROM request WHERE method_id = ?;`,
 		method_id)
 	if err != nil {
 		return nil, err
@@ -166,6 +165,41 @@ func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error
 		return nil, err
 	}
 	return &request, nil
+}
+
+/*
+*	Return array of all requests with matching collection_id.
+ */
+func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]Request, error) {
+	rows, err := ctx.DB.Query("SELECT * FROM request WHERE collection_id = ?;", collection_id)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var requests []Request
+	for rows.Next() {
+		var req Request
+		err := rows.Scan(
+			&req.ID,
+			&req.Name,
+			&req.Url,
+			&req.Method_id,
+			&req.Collection_id,
+			&req.Status_code,
+			&req.Headers,
+			&req.Body,
+			&req.Created_at,
+			&req.Updated_at,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		requests = append(requests, req)
+	}
+	return requests, nil
 }
 
 // TODO: remover referencia do ponteiro da lista de requests durante execução

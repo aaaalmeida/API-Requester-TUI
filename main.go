@@ -16,7 +16,6 @@ func main() {
 	}
 
 	p := tea.NewProgram(collection.NewModel(ctx))
-
 	_, err = p.Run()
 	if err != nil {
 		log.Fatalln(err)
