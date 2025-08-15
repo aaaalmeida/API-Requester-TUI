@@ -15,7 +15,6 @@ const FOCUS_COLOR string = "9"   //red
 // TODO: ajust based on config dotfile
 type model struct {
 	context       *context.AppContext
-	focused       bool
 	collections   []collection.Collection
 	cursor        int // Collections index
 	width         int
@@ -33,7 +32,6 @@ func NewModel(ctx *context.AppContext) model {
 
 	return model{
 		context:       ctx,
-		focused:       false,
 		collections:   collections,
 		cursor:        0,
 		width:         WIDTH,

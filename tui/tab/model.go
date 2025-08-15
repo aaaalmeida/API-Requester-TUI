@@ -4,7 +4,6 @@ import "api-requester/context"
 
 type model struct {
 	context   *context.AppContext
-	focused   bool
 	activeTab int
 	tabs      []TabModel
 }
@@ -18,7 +17,6 @@ type TabModel struct {
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:   ctx,
-		focused:   false,
 		activeTab: 0,
 		tabs: []TabModel{
 			{title: "Go", tabContent: "qweqweqweqweqweqasdasdasd"},

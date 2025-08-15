@@ -22,6 +22,8 @@ func NewModel(ctx *context.AppContext) model {
 			// FIXME: adicionar os subcomponentes de verdade
 			collection_menu.NewModel(ctx),
 			tab.NewModel(ctx),
+			collection_menu.NewModel(ctx),
+			// tab.NewModel(ctx),
 		},
 	}
 }

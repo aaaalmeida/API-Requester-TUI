@@ -10,8 +10,7 @@ import (
 
 // TODO: add style configuration
 func (m model) View() string {
-	selectedCollection := lipgloss.NewStyle().Bold(true).
-		Background(lipgloss.Color(m.focus_Color))
+	selectedCollection := lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2"))
 	normalCollection := lipgloss.NewStyle()
 
 	t := tree.New()

@@ -8,7 +8,6 @@ import (
 )
 
 func (m model) View() string {
-	defaultBoxTitleStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
 
 	var renderedTabs []string
 
@@ -17,12 +16,13 @@ func (m model) View() string {
 		isLast := i == len(m.tabs)-1
 		isActive := i == m.activeTab
 
-		defaultBoxTitleStyle.
-			Inherit(isFirstStyle(isFirst)).
-			Inherit(isLastStyle(isLast)).
-			Inherit(isActiveStyle(isActive))
+		style := lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(0, 1)
 
-		renderedTabs = append(renderedTabs, defaultBoxTitleStyle.Render(tab.title))
+		style = style.Inherit(isFirstStyle(isFirst))
+		style = style.Inherit(isLastStyle(isLast))
+		style = style.Inherit(isActiveStyle(isActive))
+
+		renderedTabs = append(renderedTabs, style.Render(tab.title))
 	}
 
 	var doc strings.Builder
@@ -31,11 +31,11 @@ func (m model) View() string {
 
 	body := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
-		Width(150).
-		Height(20).
+		Width(60).
+		Height(22).
 		Render(utils.LoremIpsup())
 
-	doc.WriteString(lipgloss.JoinVertical(lipgloss.Left, tabsHeader, body))
+	doc.WriteString(lipgloss.JoinVertical(lipgloss.Top, tabsHeader, body))
 	return doc.String()
 }
 
@@ -55,7 +55,7 @@ func isLastStyle(value bool) lipgloss.Style {
 
 func isActiveStyle(value bool) lipgloss.Style {
 	if value {
-		return lipgloss.NewStyle().BorderBottom(false).Background(lipgloss.Color("4"))
+		return lipgloss.NewStyle().BorderBottom(false)
 	}
 	return lipgloss.NewStyle()
 }

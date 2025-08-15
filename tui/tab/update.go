@@ -8,11 +8,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		// go to next tab
-		case "left":
+		case "right":
 			m.activeTab = min(m.activeTab+1, len(m.tabs)-1)
 			return m, nil
 			// go to previos tab
-		case "right":
+		case "left":
 			m.activeTab = max(m.activeTab-1, 0)
 			return m, nil
 		}

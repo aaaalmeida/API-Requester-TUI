@@ -111,9 +111,7 @@ func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
 *	Return array of all requests with matching method_id.
  */
 func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request, error) {
-	rows, err := ctx.DB.Query(`
-		SELECT * FROM request WHERE method_id = ?;`,
-		method_id)
+	rows, err := ctx.DB.Query("SELECT * FROM request WHERE method_id = ?;", method_id)
 	if err != nil {
 		return nil, err
 	}
