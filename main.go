@@ -2,7 +2,7 @@ package main
 
 import (
 	"api-requester/context"
-	"api-requester/tui/collection"
+	"api-requester/tui/main_page"
 	"log"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,7 +15,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	p := tea.NewProgram(collection.NewModel(ctx))
+	p := tea.NewProgram(main_page.NewModel(ctx))
 	_, err = p.Run()
 	if err != nil {
 		log.Fatalln(err)

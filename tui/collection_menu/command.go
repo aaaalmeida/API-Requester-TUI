@@ -1,4 +1,4 @@
-package collection
+package collection_menu
 
 import (
 	"api-requester/context"

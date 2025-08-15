@@ -1,10 +1,10 @@
-package collection
+package collection_menu
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m CollectionModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// captures msg type
 	switch msg := msg.(type) {
 	// User pressed a key
@@ -12,22 +12,18 @@ func (m CollectionModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// captures which key was pressed
 		switch msg.String() {
 
-		// exit program
-		case "ctrl+q", "esc":
-			return m, tea.Quit
-
 		case "up":
-			if m.Cursor > 0 {
-				m.Cursor--
+			if m.cursor > 0 {
+				m.cursor--
 			}
 		case "down":
-			if m.Cursor < len(m.Collections)-1 {
-				m.Cursor++
+			if m.cursor < len(m.collections)-1 {
+				m.cursor++
 			}
 		case "enter":
-			selectedCollection := m.Collections[m.Cursor]
+			selectedCollection := m.collections[m.cursor]
 			if selectedCollection.Requests == nil {
-				return m, fetchRequestsFromCollectionCmd(m.Context, selectedCollection.ID)
+				return m, fetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
 			}
 		}
 
@@ -44,9 +40,9 @@ func (m CollectionModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			ordem das collections isso vai resultar em bug. Testar antes de implementar mudança.
 		*/
 		// m.Collections[m.Cursor].Requests = msg.requests
-		for i := range m.Collections {
-			if m.Collections[i].ID == msg.collection_id {
-				m.Collections[i].Requests = msg.requests
+		for i := range m.collections {
+			if m.collections[i].ID == msg.collection_id {
+				m.collections[i].Requests = msg.requests
 			}
 		}
 	}

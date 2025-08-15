@@ -1,4 +1,4 @@
-package collection
+package collection_menu
 
 import (
 	"api-requester/utils"
@@ -9,17 +9,17 @@ import (
 )
 
 // TODO: add style configuration
-func (m CollectionModel) View() string {
+func (m model) View() string {
 	selectedCollection := lipgloss.NewStyle().Bold(true).
-		Background(lipgloss.Color(m.Focus_Color))
+		Background(lipgloss.Color(m.focus_Color))
 	normalCollection := lipgloss.NewStyle()
 
 	t := tree.New()
-	for i, col := range m.Collections {
+	for i, col := range m.collections {
 		colName := utils.Truncate(col.Name, 20)
 
 		var subTree *tree.Tree
-		if i == m.Cursor {
+		if i == m.cursor {
 			subTree = t.Child(selectedCollection.Render(colName))
 		} else {
 			subTree = t.Child(normalCollection.Render(colName))
@@ -36,7 +36,7 @@ func (m CollectionModel) View() string {
 	}
 
 	containerBoxStyle := lipgloss.NewStyle().
-		Height(m.Height).Width(m.Width).Padding(m.Padding).
+		Height(m.height).Width(m.width).Padding(m.padding).
 		Border(lipgloss.ThickBorder())
 
 	return containerBoxStyle.Render(t.String())
