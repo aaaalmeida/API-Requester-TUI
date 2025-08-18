@@ -14,14 +14,15 @@ const FOCUS_COLOR string = "9"   //red
 
 // TODO: ajust based on config dotfile
 type model struct {
-	context       *context.AppContext
-	collections   []collection.Collection
-	cursor        int // Collections index
-	width         int
-	height        int
-	padding       int
-	default_Color string // support ansi 16, ansi 256 and hexcode
-	focus_Color   string // support ansi 16, ansi 256 and hexcode
+	context        *context.AppContext
+	collections    []collection.Collection
+	openCloseIndex []bool
+	cursor         int // Collections index
+	width          int
+	height         int
+	padding        int
+	default_Color  string // support ansi 16, ansi 256 and hexcode
+	focus_Color    string // support ansi 16, ansi 256 and hexcode
 }
 
 func NewModel(ctx *context.AppContext) model {
@@ -31,13 +32,14 @@ func NewModel(ctx *context.AppContext) model {
 	}
 
 	return model{
-		context:       ctx,
-		collections:   collections,
-		cursor:        0,
-		width:         WIDTH,
-		height:        HEIGHT,
-		padding:       PADDING,
-		default_Color: DEFAULT_COLOR,
-		focus_Color:   FOCUS_COLOR,
+		context:        ctx,
+		collections:    collections,
+		openCloseIndex: make([]bool, len(collections)),
+		cursor:         0,
+		width:          WIDTH,
+		height:         HEIGHT,
+		padding:        PADDING,
+		default_Color:  DEFAULT_COLOR,
+		focus_Color:    FOCUS_COLOR,
 	}
 }

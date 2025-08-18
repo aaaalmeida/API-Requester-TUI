@@ -1,6 +1,9 @@
 package collection_menu
 
 import (
+	cmd "api-requester/tui/collection_menu/command"
+	collection_menu "api-requester/tui/collection_menu/msg"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -21,15 +24,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor++
 			}
 		case "enter":
+			// alternate between open/close collection in menu
+			m.openCloseIndex[m.cursor] = !m.openCloseIndex[m.cursor]
+
 			selectedCollection := m.collections[m.cursor]
 			if selectedCollection.Requests == nil {
-				return m, fetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
+				return m, cmd.FetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
 			}
 		}
 
 		// user fetched requests from a collection
-	case requestLoadedMsg:
-		if msg.err != nil {
+	case collection_menu.LoadCollectionMsg:
+		if msg.Err != nil {
 			// TODO: tratar erro
 			return m, nil
 		}
@@ -41,8 +47,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		*/
 		// m.Collections[m.Cursor].Requests = msg.requests
 		for i := range m.collections {
-			if m.collections[i].ID == msg.collection_id {
-				m.collections[i].Requests = msg.requests
+			if m.collections[i].ID == msg.Collection_id {
+				m.collections[i].Requests = msg.Requests
 			}
 		}
 	}

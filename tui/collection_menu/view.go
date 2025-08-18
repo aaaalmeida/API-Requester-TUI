@@ -25,7 +25,7 @@ func (m model) View() string {
 		}
 
 		// only loads fetched collections
-		if len(col.Requests) > 0 {
+		if len(col.Requests) > 0 && m.openCloseIndex[i] {
 			for _, r := range col.Requests {
 				subTree.Child(tree.New().Child(
 					utils.Truncate(

@@ -1,0 +1,21 @@
+package collection_menu
+
+import (
+	"api-requester/context"
+	"api-requester/request"
+	msg "api-requester/tui/collection_menu/msg"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
+
+func FetchRequestsFromCollectionCmd(ctx *context.AppContext, collection_id int) tea.Cmd {
+	return func() tea.Msg {
+		reqs, err := request.SearchRequestByCollectionId(ctx, collection_id)
+
+		return msg.LoadCollectionMsg{
+			Collection_id: collection_id,
+			Requests:      reqs,
+			Err:           err,
+		}
+	}
+}
