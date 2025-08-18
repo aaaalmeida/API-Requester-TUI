@@ -18,6 +18,7 @@ func (m model) View() string {
 		colName := utils.Truncate(col.Name, 20)
 
 		var subTree *tree.Tree
+		// TODO: add uma booleana pra focar o componente no model e so mostrar a seleção
 		if i == m.cursor {
 			subTree = t.Child(selectedCollection.Render(colName))
 		} else {
@@ -29,6 +30,7 @@ func (m model) View() string {
 			for _, r := range col.Requests {
 				subTree.Child(tree.New().Child(
 					utils.Truncate(
+						// TODO: mudar o id pelo nome do metodo
 						utils.Concatenate(strconv.Itoa(r.Method_id), r.Name), 20)))
 			}
 		}

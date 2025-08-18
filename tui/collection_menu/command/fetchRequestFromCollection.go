@@ -12,7 +12,7 @@ func FetchRequestsFromCollectionCmd(ctx *context.AppContext, collection_id int) 
 	return func() tea.Msg {
 		reqs, err := request.SearchRequestByCollectionId(ctx, collection_id)
 
-		return msg.LoadCollectionMsg{
+		return msg.LoadRequestFromCollectionMsg{
 			Collection_id: collection_id,
 			Requests:      reqs,
 			Err:           err,

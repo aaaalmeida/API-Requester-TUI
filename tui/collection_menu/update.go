@@ -10,7 +10,7 @@ import (
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// captures msg type
 	switch msg := msg.(type) {
-	// User pressed a key
+	// USER PRESSED A KEY
 	case tea.KeyMsg:
 		// captures which key was pressed
 		switch msg.String() {
@@ -23,7 +23,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.cursor < len(m.collections)-1 {
 				m.cursor++
 			}
-		case "enter":
+		case "enter", " ":
 			// alternate between open/close collection in menu
 			m.openCloseIndex[m.cursor] = !m.openCloseIndex[m.cursor]
 
@@ -33,8 +33,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		// user fetched requests from a collection
+		// INITIAL UPDATE
 	case collection_menu.LoadCollectionMsg:
+		m.collections = msg.Collections
+		m.openCloseIndex = make([]bool, len(m.collections))
+		return m, nil
+
+		// USER FETCHED REQUESTS FROM A COLLECTION
+	case collection_menu.LoadRequestFromCollectionMsg:
 		if msg.Err != nil {
 			// TODO: tratar erro
 			return m, nil

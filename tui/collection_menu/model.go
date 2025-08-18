@@ -3,7 +3,6 @@ package collection_menu
 import (
 	"api-requester/collection"
 	"api-requester/context"
-	"log"
 )
 
 const WIDTH int = 30
@@ -26,15 +25,10 @@ type model struct {
 }
 
 func NewModel(ctx *context.AppContext) model {
-	collections, err := collection.GetAllCollection(ctx)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
 	return model{
 		context:        ctx,
-		collections:    collections,
-		openCloseIndex: make([]bool, len(collections)),
+		collections:    nil,
+		openCloseIndex: nil,
 		cursor:         0,
 		width:          WIDTH,
 		height:         HEIGHT,
