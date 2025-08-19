@@ -1,8 +1,8 @@
 package collection_menu
 
 import (
-	cmd "api-requester/tui/collection_menu/command"
-	collection_menu "api-requester/tui/collection_menu/msg"
+	cmd "api-requester/tui/commands"
+	messages "api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -33,14 +33,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		// INITIAL UPDATE
-	case collection_menu.LoadCollectionMsg:
+	// INITIAL UPDATE
+	case messages.LoadCollectionsMsg:
 		m.collections = msg.Collections
 		m.openCloseIndex = make([]bool, len(m.collections))
 		return m, nil
 
-		// USER FETCHED REQUESTS FROM A COLLECTION
-	case collection_menu.LoadRequestFromCollectionMsg:
+	// USER FETCHED REQUESTS FROM A COLLECTION
+	case messages.LoadRequestFromCollectionMsg:
 		if msg.Err != nil {
 			// TODO: tratar erro
 			return m, nil
