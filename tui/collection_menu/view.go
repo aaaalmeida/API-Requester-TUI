@@ -10,34 +10,43 @@ import (
 
 // TODO: add style configuration
 func (m model) View() string {
-	selectedCollection := lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2"))
-	normalCollection := lipgloss.NewStyle()
+	selectedStyle := lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2"))
+	normalStyle := lipgloss.NewStyle()
 
 	t := tree.New()
+
 	for i, col := range m.collections {
+		var subTree *tree.Tree
 		colName := utils.Truncate(col.Name, 20)
 
-		var subTree *tree.Tree
-		// TODO: add uma booleana pra focar o componente no model e so mostrar a seleção
-		if i == m.cursor {
-			subTree = t.Child(selectedCollection.Render(colName))
+		// cursor in collection
+		if m.cursor.colIndex == i && m.cursor.reqIndex == nil {
+			subTree = t.Child(selectedStyle.Render(colName))
 		} else {
-			subTree = t.Child(normalCollection.Render(colName))
+			subTree = t.Child(normalStyle.Render(colName))
 		}
 
 		// only loads fetched collections
 		if len(col.Requests) > 0 && m.openCloseIndex[i] {
-			for _, r := range col.Requests {
-				subTree.Child(tree.New().Child(
-					utils.Truncate(
-						// TODO: mudar o id pelo nome do metodo
-						utils.Concatenate(strconv.Itoa(r.Method_id), r.Name), 20)))
+			for j, r := range col.Requests {
+				label := utils.Truncate(
+					// TODO: mudar o id pelo nome do metodo
+					utils.Concatenate(strconv.Itoa(r.Method_id), r.Name), 20,
+				)
+
+				if m.cursor.colIndex == i && m.cursor.reqIndex != nil && *m.cursor.reqIndex == j {
+					subTree.Child(selectedStyle.Render(label))
+				} else {
+					subTree.Child(normalStyle.Render(label))
+				}
 			}
 		}
 	}
 
 	containerBoxStyle := lipgloss.NewStyle().
-		Height(m.height).Width(m.width).Padding(m.padding).
+		Height(m.height).
+		Width(m.width).
+		Padding(m.padding).
 		Border(lipgloss.ThickBorder())
 
 	return containerBoxStyle.Render(t.String())

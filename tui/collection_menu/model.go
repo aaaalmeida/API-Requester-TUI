@@ -16,7 +16,7 @@ type model struct {
 	context        *context.AppContext
 	collections    []collection.Collection
 	openCloseIndex []bool
-	cursor         int // Collections index
+	cursor         cursor
 	width          int
 	height         int
 	padding        int
@@ -24,12 +24,17 @@ type model struct {
 	focus_Color    string // support ansi 16, ansi 256 and hexcode
 }
 
+type cursor struct {
+	colIndex int
+	reqIndex *int // if nil then points to collection, else points to requests
+}
+
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:        ctx,
 		collections:    nil,
 		openCloseIndex: nil,
-		cursor:         0,
+		cursor:         cursor{colIndex: 0, reqIndex: nil},
 		width:          WIDTH,
 		height:         HEIGHT,
 		padding:        PADDING,

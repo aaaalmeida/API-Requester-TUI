@@ -14,22 +14,40 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		// captures which key was pressed
 		switch msg.String() {
-
 		case "up":
-			if m.cursor > 0 {
-				m.cursor--
+			items := m.visibleItems()
+			for i := range items {
+				if items[i].Equal(m.cursor) {
+					if i > 0 {
+						m.cursor = items[i-1]
+					}
+					break
+				}
 			}
-		case "down":
-			if m.cursor < len(m.collections)-1 {
-				m.cursor++
-			}
-		case "enter", " ":
-			// alternate between open/close collection in menu
-			m.openCloseIndex[m.cursor] = !m.openCloseIndex[m.cursor]
 
-			selectedCollection := m.collections[m.cursor]
-			if selectedCollection.Requests == nil {
-				return m, cmd.FetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
+		case "down":
+			items := m.visibleItems()
+			for i := range items {
+				if items[i].Equal(m.cursor) {
+					if i < len(items)-1 {
+						m.cursor = items[i+1]
+					}
+					break
+				}
+			}
+
+		case "enter", " ":
+			if m.cursor.reqIndex == nil {
+				idx := m.cursor.colIndex
+				m.openCloseIndex[idx] = !m.openCloseIndex[idx]
+
+				selectedCollection := m.collections[idx]
+				if selectedCollection.Requests == nil {
+					return m, cmd.FetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
+				}
+			} else {
+				// TODO: send request to tab
+
 			}
 		}
 
@@ -60,4 +78,33 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+// Controls tree navigation
+func (m model) visibleItems() []cursor {
+	var items []cursor
+	for i, col := range m.collections {
+		items = append(items, cursor{colIndex: i, reqIndex: nil}) // collection position
+		if m.openCloseIndex[i] && col.Requests != nil {
+			for j := range col.Requests {
+				jCopy := j
+				items = append(items, cursor{colIndex: i, reqIndex: &jCopy}) // request position
+			}
+		}
+	}
+	return items
+}
+
+// Compares value, not address
+func (c cursor) Equal(other cursor) bool {
+	if c.colIndex != other.colIndex {
+		return false
+	}
+	if c.reqIndex == nil && other.reqIndex == nil {
+		return true
+	}
+	if c.reqIndex != nil && other.reqIndex != nil {
+		return *c.reqIndex == *other.reqIndex
+	}
+	return false
 }
