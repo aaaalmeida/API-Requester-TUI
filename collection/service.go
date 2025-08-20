@@ -145,3 +145,61 @@ func SearchCollectionById(ctx *context.AppContext, collection_id int) (*Collecti
 
 	return &collection, nil
 }
+
+/*
+*	Return collection with matching name or ErrNoRows if not found.
+ */
+func SearchCollectionByName(ctx *context.AppContext, collection_name string) ([]Collection, error) {
+	rows, err := ctx.DB.Query("SELECT * FROM collection WHERE name = ?;", collection_name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var collections []Collection
+	for rows.Next() {
+		var col Collection
+		err := rows.Scan(
+			&col.ID,
+			&col.Name,
+			&col.Created_at,
+			&col.Updated_at,
+			&col.Description)
+
+		if err != nil {
+			return nil, err
+		}
+		collections = append(collections, col)
+	}
+
+	return collections, nil
+}
+
+/*
+*	Return collection with containing name or ErrNoRows if not found.
+ */
+func SearchCollectionContainingName(ctx *context.AppContext, collection_name string) ([]Collection, error) {
+	rows, err := ctx.DB.Query("SELECT * FROM collection WHERE name LIKE ?;", "%"+collection_name+"%")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var collections []Collection
+	for rows.Next() {
+		var col Collection
+		err := rows.Scan(
+			&col.ID,
+			&col.Name,
+			&col.Created_at,
+			&col.Updated_at,
+			&col.Description)
+
+		if err != nil {
+			return nil, err
+		}
+		collections = append(collections, col)
+	}
+
+	return collections, nil
+}

@@ -3,27 +3,28 @@ package main_page
 import (
 	"api-requester/context"
 	"api-requester/tui/collection_menu"
+	"api-requester/tui/search_collection"
 	"api-requester/tui/tab"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 // Main TUI component.
-// encapsulate everything else
+// encapsulate everything
 type model struct {
 	active_component_index int
 	subcomponents          []tea.Model
+	context                *context.AppContext
 }
 
 func NewModel(ctx *context.AppContext) model {
 	return model{
+		context:                ctx,
 		active_component_index: 0,
 		subcomponents: []tea.Model{
-			// FIXME: adicionar os subcomponentes de verdade
+			search_collection.NewModel(ctx),
 			collection_menu.NewModel(ctx),
 			tab.NewModel(ctx),
-			collection_menu.NewModel(ctx),
-			// tab.NewModel(ctx),
 		},
 	}
 }

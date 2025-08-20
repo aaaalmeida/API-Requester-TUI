@@ -1,8 +1,14 @@
 package main_page
 
-import tea "github.com/charmbracelet/bubbletea"
+import (
+	messages "api-requester/tui/messages"
+
+	tea "github.com/charmbracelet/bubbletea"
+)
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmds []tea.Cmd
+
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -26,9 +32,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.active_component_index--
 			}
 		}
+
+	case messages.LoadCollectionsMsg:
+		if msg.Err != nil {
+			// FIXME: TRATAR ERRO
+			return m, nil
+		}
+
+		var cmd tea.Cmd
+		m.subcomponents[1], cmd = m.subcomponents[1].Update(msg)
+		return m, cmd
 	}
 
 	var cmd tea.Cmd
 	m.subcomponents[m.active_component_index], cmd = m.subcomponents[m.active_component_index].Update(msg)
-	return m, cmd
+	cmds = append(cmds, cmd)
+
+	return m, tea.Batch(cmds...)
 }

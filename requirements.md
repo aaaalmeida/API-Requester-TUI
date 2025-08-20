@@ -13,7 +13,7 @@
 * [ ] Copy requisition response (stout/file)
 * [ ] TUI
 * [X] TUI - Collection box
-* [ ] TUI - Collection box should use a tree instead of list
+* [X] TUI - Collection box should use a tree instead of list
 * [ ] TUI - Request Box
 * [ ] TUI - Response Box
 * [ ] TUI - Command visualizer
@@ -24,4 +24,5 @@
 * [ ] Document code
 * [ ] Create a readme
 * [ ] Error managment
+* [X] Logger file
 * [ ] Create a config dotfile where I can adjust font size, colors, styles, components position ...

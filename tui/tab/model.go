@@ -11,13 +11,13 @@ type model struct {
 type TabModel struct {
 	title      string
 	tabContent string
-	// TODO: add resto do model puxando info do request
 }
 
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:   ctx,
 		activeTab: 0,
+		// TODO: add resto do model puxando info do request
 		tabs: []TabModel{
 			{title: "Go", tabContent: "qweqweqweqweqweqasdasdasd"},
 			{title: "Python", tabContent: "qweqweqweqweqweqasdasdasd"},

@@ -3,11 +3,15 @@ package main_page
 import "github.com/charmbracelet/lipgloss"
 
 func (m model) View() string {
-	var subComps []string
+	leftSide := lipgloss.JoinVertical(
+		lipgloss.Top,
+		m.subcomponents[0].View(),
+		m.subcomponents[1].View(),
+	)
 
-	for _, sc := range m.subcomponents {
-		subComps = append(subComps, sc.View())
-	}
-
-	return lipgloss.JoinHorizontal(lipgloss.Top, subComps...)
+	return lipgloss.JoinHorizontal(
+		lipgloss.Top,
+		leftSide,
+		m.subcomponents[2].View(),
+	)
 }
