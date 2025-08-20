@@ -11,18 +11,23 @@ func (m model) View() string {
 
 	var renderedTabs []string
 
-	for i, tab := range m.tabs {
+	for i, tab := range m.requests {
 		isActive := i == m.activeTab
 
 		style := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
 		style = style.Inherit(isActiveStyle(isActive))
 
-		renderedTabs = append(renderedTabs, style.Render(tab.title))
+		renderedTabs = append(renderedTabs, style.Render(tab.Name))
 	}
 
 	var doc strings.Builder
 
-	tabsHeader := lipgloss.JoinHorizontal(lipgloss.Top, renderedTabs...)
+	tabsContent := lipgloss.JoinHorizontal(lipgloss.Left, renderedTabs...)
+
+	tabsHeader := lipgloss.NewStyle().
+		Border(lipgloss.ThickBorder()).
+		Width(60).
+		Render(tabsContent)
 
 	body := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).

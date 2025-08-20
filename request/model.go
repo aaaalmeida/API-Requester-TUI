@@ -19,5 +19,5 @@ type Request struct {
 }
 
 func (r Request) String() string {
-	return fmt.Sprintf("%d %s %s %d", r.ID, r.Name, r.Url, r.Collection_id)
+	return fmt.Sprintf("%d %s %s %d %d %d %s %s %s %s", r.ID, r.Name, r.Url, r.Method_id, r.Collection_id, r.Status_code.Int16, r.Headers.String, r.Body.String, r.Created_at, r.Updated_at)
 }

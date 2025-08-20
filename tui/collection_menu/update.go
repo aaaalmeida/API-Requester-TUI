@@ -46,8 +46,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, cmd.FetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
 				}
 			} else {
-				// TODO: send request to tab
-
+				req := m.collections[m.cursor.colIndex].Requests[*m.cursor.reqIndex]
+				return m, cmd.SendRequestToTabCmd(req)
 			}
 		}
 

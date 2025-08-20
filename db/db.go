@@ -3,9 +3,11 @@ package db
 import (
 	"database/sql"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
-const DB_NAME string = "mydb.sqlite"
+const DB_NAME string = "database.sqlite"
 const SCHEMA string = "db/schema.sql"
 
 func InitSchema(db *sql.DB) error {

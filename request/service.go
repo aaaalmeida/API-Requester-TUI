@@ -23,8 +23,7 @@ func AddRequest(ctx *context.AppContext, name, url string,
 
 	stmt, err := ctx.DB.Prepare(`
 		INSERT INTO request(name, url, method_id, collection_id, status_code, headers, body)
-		 VALUES (?, ?, ?, ?, ?, ?, ?);
-	`)
+		 VALUES (?, ?, ?, ?, ?, ?, ?);`)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +77,8 @@ func AddRequest(ctx *context.AppContext, name, url string,
 *	Return array of all requests.
  */
 func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
-	rows, err := ctx.DB.Query("SELECT * FROM request;")
+	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
+	 status_code, headers, body, created_at, updated_at FROM request;`)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,8 @@ func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
 *	Return array of all requests with matching method_id.
  */
 func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request, error) {
-	rows, err := ctx.DB.Query("SELECT * FROM request WHERE method_id = ?;", method_id)
+	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
+	 status_code, headers, body, created_at, updated_at FROM request;`, method_id)
 	if err != nil {
 		return nil, err
 	}
@@ -130,6 +131,8 @@ func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request,
 			&req.Status_code,
 			&req.Headers,
 			&req.Body,
+			&req.Created_at,
+			&req.Updated_at,
 		)
 		if err != nil {
 			return nil, err
@@ -144,8 +147,8 @@ func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request,
 *	Return request with matching id or ErrNoRows if not found.
  */
 func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error) {
-	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id, status_code, headers, body
-	 FROM request WHERE id = ?;`, request_id)
+	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id,
+	 status_code, headers, body, created_at, updated_at FROM request;`, request_id)
 
 	var request Request
 	err := row.Scan(
@@ -157,6 +160,8 @@ func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error
 		&request.Status_code,
 		&request.Headers,
 		&request.Body,
+		&request.Created_at,
+		&request.Updated_at,
 	)
 
 	if err != nil {
@@ -169,7 +174,8 @@ func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error
 *	Return array of all requests with matching collection_id.
  */
 func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]Request, error) {
-	rows, err := ctx.DB.Query("SELECT * FROM request WHERE collection_id = ?;", collection_id)
+	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
+	 status_code, headers, body, created_at, updated_at FROM request;`, collection_id)
 	if err != nil {
 		return nil, err
 	}

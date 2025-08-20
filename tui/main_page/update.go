@@ -33,6 +33,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
+	// USER SEARCHED A COLLECTION
 	case messages.LoadCollectionsMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
@@ -41,6 +42,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		var cmd tea.Cmd
 		m.subcomponents[1], cmd = m.subcomponents[1].Update(msg)
+		return m, cmd
+
+	case messages.LoadRequestMsg:
+		if msg.Err != nil {
+			// FIXME: TRATAR ERRO
+			return m, nil
+		}
+
+		var cmd tea.Cmd
+		m.subcomponents[2], cmd = m.subcomponents[2].Update(msg)
 		return m, cmd
 	}
 

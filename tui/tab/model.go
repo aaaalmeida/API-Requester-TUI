@@ -1,28 +1,20 @@
 package tab
 
-import "api-requester/context"
+import (
+	"api-requester/context"
+	"api-requester/request"
+)
 
 type model struct {
 	context   *context.AppContext
 	activeTab int
-	tabs      []TabModel
-}
-
-type TabModel struct {
-	title      string
-	tabContent string
+	requests  []request.Request
 }
 
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:   ctx,
 		activeTab: 0,
-		// TODO: add resto do model puxando info do request
-		tabs: []TabModel{
-			{title: "Go", tabContent: "qweqweqweqweqweqasdasdasd"},
-			{title: "Python", tabContent: "qweqweqweqweqweqasdasdasd"},
-			{title: "Java", tabContent: "qweqweqweqweqweqasdasdasd"},
-			{title: "JavaScript", tabContent: "qweqweqweqweqweqasdasdasd"},
-		},
+		requests:  nil,
 	}
 }
