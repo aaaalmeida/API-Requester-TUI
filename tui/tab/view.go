@@ -8,41 +8,32 @@ import (
 )
 
 func (m model) View() string {
-
+	var view strings.Builder
 	var renderedTabs []string
 
-	for i, tab := range m.requests {
-		isActive := i == m.activeTab
-
-		style := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
-		style = style.Inherit(isActiveStyle(isActive))
-
-		renderedTabs = append(renderedTabs, style.Render(tab.Name))
+	// HEADER
+	for _, req := range m.tabsHeader {
+		renderedTabs = append(renderedTabs, req.View())
 	}
 
-	var doc strings.Builder
-
+	// JOIN TABS INSIDE HEADER BOX
 	tabsContent := lipgloss.JoinHorizontal(lipgloss.Left, renderedTabs...)
-
-	tabsHeader := lipgloss.NewStyle().
+	tabsHeaderBox := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
-		Width(60).
+		Width(130).
+		Height(3).
 		Render(tabsContent)
 
-	body := lipgloss.NewStyle().
+	// BODY
+	bodyBox := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
 		Width(60).
-		Height(22).
-		Render(utils.LoremIpsup())
+		Height(25).
+		// TODO: TIRAR LOREM IPSUM
+		Render(utils.LoremIpsum())
 
-	doc.WriteString(lipgloss.JoinVertical(lipgloss.Top, tabsHeader, body))
-	return doc.String()
-}
+	// JOIN HEADER AND BODY
+	view.WriteString(lipgloss.JoinVertical(lipgloss.Top, tabsHeaderBox, bodyBox))
 
-func isActiveStyle(value bool) lipgloss.Style {
-	if value {
-		return lipgloss.NewStyle().
-			Background(lipgloss.Color("2"))
-	}
-	return lipgloss.NewStyle()
+	return view.String()
 }

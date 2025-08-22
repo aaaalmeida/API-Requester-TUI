@@ -1,8 +1,8 @@
-package search_collection
+package input
 
 import "github.com/charmbracelet/lipgloss"
 
-func (m model) View() string {
+func (m Model) View() string {
 	return lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
 		Width(30).

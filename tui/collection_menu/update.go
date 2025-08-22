@@ -38,16 +38,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case "enter", " ":
 			if m.cursor.reqIndex == nil {
-				idx := m.cursor.colIndex
-				m.openCloseIndex[idx] = !m.openCloseIndex[idx]
+				// USER PRESSED ENTER IN A COLLECTION
+				index := m.cursor.colIndex
+				m.openCloseIndex[index] = !m.openCloseIndex[index]
 
-				selectedCollection := m.collections[idx]
+				selectedCollection := m.collections[index]
+
+				// LAZY LOADING.
+				// ONLY LOADS REQUESTS FROM DB WHEN NEEDED.
 				if selectedCollection.Requests == nil {
 					return m, cmd.FetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
 				}
 			} else {
+				// USER PRESSED ENTER IN A REQUEST
 				req := m.collections[m.cursor.colIndex].Requests[*m.cursor.reqIndex]
-				return m, cmd.SendRequestToTabCmd(req)
+				return m, cmd.SendRequestCmd(&req)
 			}
 		}
 

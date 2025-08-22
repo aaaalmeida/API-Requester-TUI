@@ -1,3 +1,4 @@
+## REQUIREMENTS
 * [X] Fetch collections
 * [X] Save collections in db
 * [X] Update collections
@@ -25,4 +26,9 @@
 * [ ] Create a readme
 * [ ] Error managment
 * [X] Logger file
+* [ ] Change default background color when element is focused
 * [ ] Create a config dotfile where I can adjust font size, colors, styles, components position ...
+
+
+## BUGS
+* [ ] Fix pointers reference in personel tea.Cmd
