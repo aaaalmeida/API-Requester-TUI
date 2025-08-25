@@ -1,15 +1,22 @@
 package tab_header
 
-import "api-requester/request"
+import (
+	"api-requester/context"
+	"api-requester/request"
+)
 
 type Model struct {
-	isSelected bool
-	request    *request.Request
+	context     *context.AppContext
+	cursor      int
+	selectedTab int
+	requests    []*request.Request
 }
 
-func NewModel(req *request.Request) Model {
+func NewModel(ctx *context.AppContext) Model {
 	return Model{
-		isSelected: false,
-		request:    req,
+		cursor:      0,
+		selectedTab: 0,
+		requests:    nil,
+		context:     ctx,
 	}
 }

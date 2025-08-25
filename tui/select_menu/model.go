@@ -5,7 +5,7 @@ type Model struct {
 	cursor       int
 	selectedItem int
 	isOpened     bool
-	Width        int
+	width        int
 }
 
 // Generic Interface. Everything that uses component MUST implements this.
@@ -20,6 +20,6 @@ func NewModel() Model {
 		selectedItem: 0,
 		options:      nil,
 		isOpened:     false,
-		Width:        20,
+		width:        20,
 	}
 }

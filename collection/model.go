@@ -9,7 +9,7 @@ import (
 type Collection struct {
 	ID          int
 	Name        string
-	Requests    []request.Request
+	Requests    []*request.Request
 	Created_at  string
 	Updated_at  string
 	Description sql.NullString

@@ -15,6 +15,7 @@
 * [ ] TUI
 * [X] TUI - Collection box
 * [X] TUI - Collection box should use a tree instead of list
+* [X] TUI - Request Header
 * [ ] TUI - Request Box
 * [ ] TUI - Response Box
 * [ ] TUI - Command visualizer
@@ -31,4 +32,5 @@
 
 
 ## BUGS
-* [ ] Fix pointers reference in personel tea.Cmd
+* [X] Fix pointers reference in created tea.Commands
+* [X] Tabs only load request once

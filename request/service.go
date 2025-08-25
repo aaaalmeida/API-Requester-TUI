@@ -173,16 +173,16 @@ func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error
 /*
 *	Return array of all requests with matching collection_id.
  */
-func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]Request, error) {
+func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]*Request, error) {
 	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
-	 status_code, headers, body, created_at, updated_at FROM request;`, collection_id)
+	 status_code, headers, body, created_at, updated_at FROM request WHERE collection_id = ?;`, collection_id)
 	if err != nil {
 		return nil, err
 	}
 
 	defer rows.Close()
 
-	var requests []Request
+	var requests []*Request
 	for rows.Next() {
 		var req Request
 		err := rows.Scan(
@@ -201,7 +201,7 @@ func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]
 			return nil, err
 		}
 
-		requests = append(requests, req)
+		requests = append(requests, &req)
 	}
 	return requests, nil
 }

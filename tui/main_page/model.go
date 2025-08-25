@@ -20,7 +20,7 @@ type model struct {
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:                ctx,
-		active_component_index: 0,
+		active_component_index: 1,
 		subcomponents: []tea.Model{
 			search_collection.NewModel(ctx),
 			collection_menu.NewModel(ctx),

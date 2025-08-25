@@ -7,5 +7,5 @@ import (
 )
 
 func (m model) Init() tea.Cmd {
-	return cmd.FetchCollectionsCmd(m.context)
+	return cmd.FetchCollectionsFromDBCmd(m.context)
 }

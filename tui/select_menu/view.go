@@ -7,12 +7,11 @@ import (
 )
 
 func (m Model) View() string {
-	// TODO: melhorar interface
-	selectedStyle := lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2")).Border(lipgloss.NormalBorder())
-	normalStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder())
+	normalStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Width(m.width)
+	selectedStyle := normalStyle.Inherit(lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2")))
 
 	if len(m.options) == 0 {
-		return selectedStyle.Render("")
+		return selectedStyle.Render("qwe")
 	}
 
 	if !m.isOpened {

@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func FetchRequestsFromCollectionCmd(ctx *context.AppContext, collection_id int) tea.Cmd {
+func UserPressEnterInCollectionCmd(ctx *context.AppContext, collection_id int) tea.Cmd {
 	return func() tea.Msg {
 		reqs, err := request.SearchRequestByCollectionId(ctx, collection_id)
 

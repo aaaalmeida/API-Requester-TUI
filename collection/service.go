@@ -11,8 +11,8 @@ import (
 /*
 *	Return array of all collections.
  */
-func GetAllCollection(ctx *context.AppContext) ([]Collection, error) {
-	rows, err := ctx.DB.Query("SELECT * FROM collection")
+func GetAllCollection(ctx *context.AppContext) ([]*Collection, error) {
+	rows, err := ctx.DB.Query("SELECT id, name, description, created_at, updated_at FROM collection")
 
 	if err != nil {
 		return nil, err
@@ -20,21 +20,22 @@ func GetAllCollection(ctx *context.AppContext) ([]Collection, error) {
 
 	defer rows.Close()
 
-	var collections []Collection
+	var collections []*Collection
 
 	for rows.Next() {
 		var collec Collection
 		err := rows.Scan(
 			&collec.ID,
 			&collec.Name,
+			&collec.Description,
 			&collec.Created_at,
 			&collec.Updated_at,
-			&collec.Description)
+		)
 		if err != nil {
 			return nil, err
 		}
 
-		collections = append(collections, collec)
+		collections = append(collections, &collec)
 	}
 
 	return collections, nil
@@ -147,59 +148,14 @@ func SearchCollectionById(ctx *context.AppContext, collection_id int) (*Collecti
 }
 
 /*
-*	Return collection with matching name or ErrNoRows if not found.
- */
-func SearchCollectionByName(ctx *context.AppContext, collection_name string) ([]Collection, error) {
-	rows, err := ctx.DB.Query("SELECT * FROM collection WHERE name = ?;", collection_name)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var collections []Collection
-	for rows.Next() {
-		var col Collection
-		err := rows.Scan(
-			&col.ID,
-			&col.Name,
-			&col.Created_at,
-			&col.Updated_at,
-			&col.Description)
-
-		if err != nil {
-			return nil, err
-		}
-		collections = append(collections, col)
-	}
-
-	return collections, nil
-}
-
-/*
 *	Return collection with containing name or ErrNoRows if not found.
  */
-func SearchCollectionContainingName(ctx *context.AppContext, collection_name string) ([]Collection, error) {
-	rows, err := ctx.DB.Query("SELECT * FROM collection WHERE name LIKE ?;", "%"+collection_name+"%")
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var collections []Collection
-	for rows.Next() {
-		var col Collection
-		err := rows.Scan(
-			&col.ID,
-			&col.Name,
-			&col.Created_at,
-			&col.Updated_at,
-			&col.Description)
-
-		if err != nil {
-			return nil, err
+func SearchCollectionContainingName(collections []*Collection, collection_name string) []*Collection {
+	var cols []*Collection
+	for _, c := range collections {
+		if strings.Contains(c.Name, collection_name) {
+			cols = append(cols, c)
 		}
-		collections = append(collections, col)
 	}
-
-	return collections, nil
+	return cols
 }

@@ -1,7 +1,6 @@
 package tab
 
 import (
-	"api-requester/utils"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -9,31 +8,14 @@ import (
 
 func (m model) View() string {
 	var view strings.Builder
-	var renderedTabs []string
 
-	// HEADER
-	for _, req := range m.tabsHeader {
-		renderedTabs = append(renderedTabs, req.View())
-	}
-
-	// JOIN TABS INSIDE HEADER BOX
-	tabsContent := lipgloss.JoinHorizontal(lipgloss.Left, renderedTabs...)
-	tabsHeaderBox := lipgloss.NewStyle().
-		Border(lipgloss.ThickBorder()).
-		Width(130).
-		Height(3).
-		Render(tabsContent)
+	tab_header := m.tab_header.View()
 
 	// BODY
-	bodyBox := lipgloss.NewStyle().
-		Border(lipgloss.ThickBorder()).
-		Width(60).
-		Height(25).
-		// TODO: TIRAR LOREM IPSUM
-		Render(utils.LoremIpsum())
+	tab_body := m.tab_body.View()
 
 	// JOIN HEADER AND BODY
-	view.WriteString(lipgloss.JoinVertical(lipgloss.Top, tabsHeaderBox, bodyBox))
+	view.WriteString(lipgloss.JoinVertical(lipgloss.Top, tab_header, tab_body))
 
 	return view.String()
 }

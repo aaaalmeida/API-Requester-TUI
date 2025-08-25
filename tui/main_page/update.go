@@ -10,6 +10,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
+	// GENERAL NAVEGATION
 	case tea.KeyMsg:
 		switch msg.String() {
 		// exit program
@@ -44,7 +45,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.subcomponents[1], cmd = m.subcomponents[1].Update(msg)
 		return m, cmd
 
-	case messages.LoadRequestMsg:
+	case messages.SendRequestToTabMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
 			return m, nil

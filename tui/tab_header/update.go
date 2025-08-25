@@ -1,7 +1,8 @@
 package tab_header
 
 import (
-	cmd "api-requester/tui/commands"
+	messages "api-requester/tui/messages"
+	"slices"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -10,11 +11,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
+		// TODO
 		case "enter":
-			if !m.isSelected {
-				m.isSelected = true
-				return m, cmd.SendRequestCmd(m.request)
-			}
+		case "left":
+		case "right":
+		}
+
+	case messages.SendRequestToTabMsg:
+		if !slices.Contains(m.requests, msg.Request) {
+			m.requests = append(m.requests, msg.Request)
 		}
 	}
 

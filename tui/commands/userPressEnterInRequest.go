@@ -7,9 +7,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func SendRequestCmd(request *request.Request) tea.Cmd {
+func UserPressEnterInRequestCmd(request *request.Request) tea.Cmd {
 	return func() tea.Msg {
-		return msg.LoadRequestMsg{
+		return msg.SendRequestToTabMsg{
 			Request: request,
 			Err:     nil,
 		}

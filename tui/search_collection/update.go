@@ -1,8 +1,6 @@
 package search_collection
 
 import (
-	cmd "api-requester/tui/commands"
-
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -12,7 +10,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			return m, cmd.SearchCollectionContainingNameCmd(m.context, m.textInput.Value())
+			//FIXME
+			// return m, cmd.SearchCollectionContainingNameCmd(m.context, m.textInput.Value())
 		}
 	}
 

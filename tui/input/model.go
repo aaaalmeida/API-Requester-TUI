@@ -8,9 +8,9 @@ type Model struct {
 	textInput textinput.Model
 }
 
-func NewModel(placeholder *string) Model {
+func NewModel() Model {
 	ti := textinput.New()
-	ti.Placeholder = *placeholder
+	ti.Placeholder = "qweqw"
 
 	return Model{
 		textInput: ti,

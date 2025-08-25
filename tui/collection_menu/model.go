@@ -14,7 +14,7 @@ const FOCUS_COLOR string = "9"   //red
 // TODO: ajust based on config dotfile
 type model struct {
 	context        *context.AppContext
-	collections    []collection.Collection
+	collections    []*collection.Collection
 	openCloseIndex []bool
 	cursor         cursor
 	width          int

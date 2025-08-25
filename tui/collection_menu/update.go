@@ -10,6 +10,13 @@ import (
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// captures msg type
 	switch msg := msg.(type) {
+
+	// INITIAL UPDATE
+	case messages.LoadCollectionsMsg:
+		m.collections = msg.Collections
+		m.openCloseIndex = make([]bool, len(m.collections))
+		return m, nil
+
 	// USER PRESSED A KEY
 	case tea.KeyMsg:
 		// captures which key was pressed
@@ -39,30 +46,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter", " ":
 			if m.cursor.reqIndex == nil {
 				// USER PRESSED ENTER IN A COLLECTION
-				index := m.cursor.colIndex
-				m.openCloseIndex[index] = !m.openCloseIndex[index]
+				selectedIndex := m.cursor.colIndex
+				m.openCloseIndex[selectedIndex] = !m.openCloseIndex[selectedIndex]
 
-				selectedCollection := m.collections[index]
+				selectedCollection := m.collections[selectedIndex]
 
 				// LAZY LOADING.
 				// ONLY LOADS REQUESTS FROM DB WHEN NEEDED.
 				if selectedCollection.Requests == nil {
-					return m, cmd.FetchRequestsFromCollectionCmd(m.context, selectedCollection.ID)
+					return m, cmd.UserPressEnterInCollectionCmd(m.context, selectedCollection.ID)
 				}
 			} else {
 				// USER PRESSED ENTER IN A REQUEST
 				req := m.collections[m.cursor.colIndex].Requests[*m.cursor.reqIndex]
-				return m, cmd.SendRequestCmd(&req)
+				return m, cmd.UserPressEnterInRequestCmd(req)
 			}
 		}
 
-	// INITIAL UPDATE
-	case messages.LoadCollectionsMsg:
-		m.collections = msg.Collections
-		m.openCloseIndex = make([]bool, len(m.collections))
-		return m, nil
-
-	// USER FETCHED REQUESTS FROM A COLLECTION
+	// USER PRESSED ENTER IN A COLLECTION.
+	// IMPORT ALL REQUESTS FROM THIS COLLECTION.
 	case messages.LoadRequestFromCollectionMsg:
 		if msg.Err != nil {
 			// TODO: tratar erro

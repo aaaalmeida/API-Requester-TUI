@@ -3,16 +3,20 @@ package tab_header
 import "github.com/charmbracelet/lipgloss"
 
 func (m Model) View() string {
-	style := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
-	style = style.Inherit(isCursorPointingStyle(m.isSelected))
+	selectedStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Background(lipgloss.Color("2"))
+	normalStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
 
-	return style.Render(m.request.Name)
-}
-
-func isCursorPointingStyle(value bool) lipgloss.Style {
-	if value {
-		return lipgloss.NewStyle().
-			Background(lipgloss.Color("2"))
+	var tabs []string
+	for i, req := range m.requests {
+		if i == m.selectedTab {
+			tabs = append(tabs, selectedStyle.Render(req.Name))
+		} else {
+			tabs = append(tabs, normalStyle.Render(req.Name))
+		}
 	}
-	return lipgloss.NewStyle()
+
+	headerContent := lipgloss.JoinHorizontal(lipgloss.Left, tabs...)
+	headerBox := lipgloss.NewStyle().Border(lipgloss.ThickBorder()).Width(130).Height(3)
+
+	return headerBox.Render(headerContent)
 }

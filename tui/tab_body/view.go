@@ -6,7 +6,7 @@ import (
 
 func (m Model) View() string {
 	selectMethod := m.selectMethod.View()
-	inputUrl := m.input.View()
+	inputUrl := m.inputMethod.View()
 
 	bodyBox := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
