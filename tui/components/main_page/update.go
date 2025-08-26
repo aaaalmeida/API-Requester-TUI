@@ -22,23 +22,15 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// active component is the last
 			if m.active_component_index == len(m.subcomponents)-1 {
 				m.active_component_index = 0
-				m.context.Logger.Println("TAB PRA CIMA")
-				m.context.Logger.Println(m.active_component_index)
 			} else {
 				m.active_component_index++
-				m.context.Logger.Println("TAB PRA BAIXO")
-				m.context.Logger.Println(m.active_component_index)
 			}
 		case "shift+tab":
 			// active component is the first
 			if m.active_component_index == 0 {
 				m.active_component_index = len(m.subcomponents) - 1
-				m.context.Logger.Println("SHIFTTAB PRA CIMA")
-				m.context.Logger.Println(m.active_component_index)
 			} else {
 				m.active_component_index--
-				m.context.Logger.Println("SHIFTTAB PRA BAIXO")
-				m.context.Logger.Println(m.active_component_index)
 			}
 		}
 
@@ -50,7 +42,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		var cmd tea.Cmd
-		m.subcomponents[1], cmd = m.subcomponents[1].Update(msg)
+		m.subcomponents[COLLECTION_MENU_INDEX], cmd = m.subcomponents[COLLECTION_MENU_INDEX].Update(msg)
 		return m, cmd
 
 	case messages.SendRequestToTabMsg:
@@ -60,7 +52,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		var cmd tea.Cmd
-		m.subcomponents[2], cmd = m.subcomponents[2].Update(msg)
+		m.subcomponents[HEADER_INDEX], cmd = m.subcomponents[HEADER_INDEX].Update(msg)
 		return m, cmd
 	}
 

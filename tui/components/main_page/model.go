@@ -3,11 +3,18 @@ package main_page
 import (
 	"api-requester/context"
 	"api-requester/tui/components/collection_menu"
+	"api-requester/tui/components/header"
 	"api-requester/tui/components/search_collection"
-	"api-requester/tui/components/tab"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+// components index
+const SEARCH_COLLECTION_INDEX int = 0
+const COLLECTION_MENU_INDEX int = 1
+const HEADER_INDEX int = 2
+const REQUEST_HEADERS_INDEX int = 3
+const REQUEST_RESPONSE_INDEX int = 4
 
 // Main TUI component.
 // encapsulate everything
@@ -20,11 +27,11 @@ type model struct {
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:                ctx,
-		active_component_index: 1,
+		active_component_index: COLLECTION_MENU_INDEX,
 		subcomponents: []tea.Model{
 			search_collection.NewModel(ctx),
 			collection_menu.NewModel(ctx),
-			tab.NewModel(ctx),
+			header.NewModel(ctx),
 		},
 	}
 }

@@ -1,4 +1,4 @@
-package tab_header
+package header
 
 import (
 	messages "api-requester/tui/messages"
@@ -27,6 +27,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
+		// ADD REQUEST ONLY IF NOT ALREADY EXISTS
 	case messages.SendRequestToTabMsg:
 		if !slices.Contains(m.requests, msg.Request) {
 			m.requests = append(m.requests, msg.Request)

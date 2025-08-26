@@ -1,4 +1,4 @@
-package tab_header
+package header
 
 import tea "github.com/charmbracelet/bubbletea"
 
