@@ -1,7 +1,7 @@
 package commands
 
 import (
-	"api-requester/request"
+	"api-requester/domain/request"
 	msg "api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"

@@ -1,7 +1,7 @@
 package collection
 
 import (
-	"api-requester/request"
+	"api-requester/domain/request"
 	"database/sql"
 	"fmt"
 )

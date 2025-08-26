@@ -2,9 +2,9 @@ package main_page
 
 import (
 	"api-requester/context"
-	"api-requester/tui/collection_menu"
-	"api-requester/tui/search_collection"
-	"api-requester/tui/tab"
+	"api-requester/tui/components/collection_menu"
+	"api-requester/tui/components/search_collection"
+	"api-requester/tui/components/tab"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

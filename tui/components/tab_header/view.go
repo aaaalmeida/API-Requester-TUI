@@ -8,7 +8,7 @@ func (m Model) View() string {
 
 	var tabs []string
 	for i, req := range m.requests {
-		if i == m.selectedTab {
+		if i == m.selectedTabIndex {
 			tabs = append(tabs, selectedStyle.Render(req.Name))
 		} else {
 			tabs = append(tabs, normalStyle.Render(req.Name))

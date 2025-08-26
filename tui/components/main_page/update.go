@@ -22,15 +22,23 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// active component is the last
 			if m.active_component_index == len(m.subcomponents)-1 {
 				m.active_component_index = 0
+				m.context.Logger.Println("TAB PRA CIMA")
+				m.context.Logger.Println(m.active_component_index)
 			} else {
 				m.active_component_index++
+				m.context.Logger.Println("TAB PRA BAIXO")
+				m.context.Logger.Println(m.active_component_index)
 			}
 		case "shift+tab":
 			// active component is the first
 			if m.active_component_index == 0 {
 				m.active_component_index = len(m.subcomponents) - 1
+				m.context.Logger.Println("SHIFTTAB PRA CIMA")
+				m.context.Logger.Println(m.active_component_index)
 			} else {
 				m.active_component_index--
+				m.context.Logger.Println("SHIFTTAB PRA BAIXO")
+				m.context.Logger.Println(m.active_component_index)
 			}
 		}
 

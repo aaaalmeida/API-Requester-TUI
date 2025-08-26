@@ -2,7 +2,7 @@ package commands
 
 import (
 	"api-requester/context"
-	"api-requester/method"
+	"api-requester/domain/method"
 	messages "api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"

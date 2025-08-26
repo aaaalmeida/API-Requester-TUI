@@ -1,6 +1,6 @@
 package messages
 
-import "api-requester/collection"
+import "api-requester/domain/collection"
 
 type LoadCollectionsMsg struct {
 	Collections []*collection.Collection

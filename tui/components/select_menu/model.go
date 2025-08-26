@@ -1,17 +1,15 @@
 package select_menu
 
+import (
+	"api-requester/shared/selectable"
+)
+
 type Model struct {
-	options      []selectOption
+	options      []selectable.SelectOption
 	cursor       int
 	selectedItem int
 	isOpened     bool
 	width        int
-}
-
-// Generic Interface. Everything that uses component MUST implements this.
-type selectOption interface {
-	Label() string
-	Value() any
 }
 
 func NewModel() Model {

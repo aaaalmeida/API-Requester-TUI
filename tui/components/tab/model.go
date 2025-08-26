@@ -2,9 +2,9 @@ package tab
 
 import (
 	"api-requester/context"
-	"api-requester/request"
-	"api-requester/tui/tab_body"
-	"api-requester/tui/tab_header"
+	"api-requester/domain/request"
+	"api-requester/tui/components/tab_body"
+	"api-requester/tui/components/tab_header"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

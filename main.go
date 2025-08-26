@@ -2,7 +2,7 @@ package main
 
 import (
 	"api-requester/context"
-	"api-requester/tui/main_page"
+	"api-requester/tui/components/main_page"
 
 	tea "github.com/charmbracelet/bubbletea"
 )

@@ -1,8 +1,8 @@
 package collection_menu
 
 import (
-	"api-requester/collection"
 	"api-requester/context"
+	"api-requester/domain/collection"
 )
 
 const WIDTH int = 30

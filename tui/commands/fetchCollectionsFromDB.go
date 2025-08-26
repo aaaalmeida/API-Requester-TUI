@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"api-requester/collection"
 	"api-requester/context"
+	"api-requester/domain/collection"
 	msg "api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"

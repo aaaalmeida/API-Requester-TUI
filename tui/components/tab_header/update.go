@@ -11,10 +11,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
-		// TODO
 		case "enter":
+			m.selectedTabIndex = m.cursor
 		case "left":
+			if m.cursor == len(m.requests)-1 {
+				m.cursor = 0
+			} else {
+				m.cursor++
+			}
 		case "right":
+			if m.cursor == 0 {
+				m.cursor = len(m.requests) - 1
+			} else {
+				m.cursor--
+			}
 		}
 
 	case messages.SendRequestToTabMsg:

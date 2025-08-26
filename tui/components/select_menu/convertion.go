@@ -1,21 +1,22 @@
 package select_menu
 
 import (
-	"api-requester/collection"
-	"api-requester/method"
+	"api-requester/domain/collection"
+	"api-requester/domain/method"
+	"api-requester/shared/selectable"
 )
 
 // Conversors
-func ConvertMethodsToSelectOptions(methods []method.Method) []selectOption {
-	opts := make([]selectOption, len(methods))
+func ConvertMethodsToSelectOptions(methods []method.Method) []selectable.SelectOption {
+	opts := make([]selectable.SelectOption, len(methods))
 	for i, m := range methods {
 		opts[i] = MethodOption{m}
 	}
 	return opts
 }
 
-func CollectionsToselectOptions(cols []collection.Collection) []selectOption {
-	opts := make([]selectOption, len(cols))
+func CollectionsToselectOptions(cols []collection.Collection) []selectable.SelectOption {
+	opts := make([]selectable.SelectOption, len(cols))
 	for i, c := range cols {
 		opts[i] = CollectionOption{c}
 	}

@@ -1,6 +1,6 @@
 package messages
 
-import "api-requester/request"
+import "api-requester/domain/request"
 
 type LoadRequestMsg struct {
 	Request *request.Request
