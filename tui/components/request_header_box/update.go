@@ -11,6 +11,14 @@ import (
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "left":
+
+		case "right":
+		case "enter":
+		}
+
 	// CAPTURE REQUEST
 	case messages.LoadRequestMsg:
 		m.request = msg.Request
