@@ -13,7 +13,7 @@ func main() {
 		ctx.Logger.Fatalln(err)
 	}
 
-	p := tea.NewProgram(main_page.NewModel(ctx))
+	p := tea.NewProgram(main_page.NewModel(ctx), tea.WithAltScreen())
 	_, err = p.Run()
 	if err != nil {
 		ctx.Logger.Fatalln(err)

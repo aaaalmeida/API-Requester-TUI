@@ -1,4 +1,4 @@
-package tab_body
+package request_header_box
 
 import (
 	"api-requester/context"
@@ -8,17 +8,18 @@ import (
 )
 
 type Model struct {
+	context      *context.AppContext
 	request      *request.Request
 	selectMethod select_menu.Model
 	inputMethod  input.Model
-	context      *context.AppContext
 }
 
 func NewModel(ctx *context.AppContext) Model {
+	pl := "bolotinha"
 	return Model{
 		context:      ctx,
 		request:      nil,
 		selectMethod: select_menu.NewModel(),
-		inputMethod:  input.NewModel(),
+		inputMethod:  input.NewModel(40, &pl),
 	}
 }

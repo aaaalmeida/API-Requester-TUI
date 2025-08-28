@@ -1,6 +1,7 @@
 package header
 
 import (
+	commands "api-requester/tui/commands"
 	messages "api-requester/tui/messages"
 	"slices"
 
@@ -13,13 +14,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "enter":
 			m.selectedTabIndex = m.cursor
-		case "left":
+			return m, commands.UserPressEnterInRequestCmd(m.requests[m.selectedTabIndex])
+
+		case "right":
 			if m.cursor == len(m.requests)-1 {
 				m.cursor = 0
 			} else {
 				m.cursor++
 			}
-		case "right":
+		case "left":
 			if m.cursor == 0 {
 				m.cursor = len(m.requests) - 1
 			} else {
@@ -27,8 +30,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
+		// USER PRESS ENTER IN COLLECTION MENU
 		// ADD REQUEST ONLY IF NOT ALREADY EXISTS
-	case messages.SendRequestToTabMsg:
+	case messages.SendRequestMsg:
 		if !slices.Contains(m.requests, msg.Request) {
 			m.requests = append(m.requests, msg.Request)
 		}

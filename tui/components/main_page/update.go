@@ -45,7 +45,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.subcomponents[COLLECTION_MENU_INDEX], cmd = m.subcomponents[COLLECTION_MENU_INDEX].Update(msg)
 		return m, cmd
 
-	case messages.SendRequestToTabMsg:
+	// SEND A REQUEST FROM COLLECTION_MENU TO HEADER
+	case messages.SendRequestMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
 			return m, nil
@@ -53,6 +54,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		var cmd tea.Cmd
 		m.subcomponents[HEADER_INDEX], cmd = m.subcomponents[HEADER_INDEX].Update(msg)
+		return m, cmd
+
+		// FETCH METHODS FROM DB TO REQUEST_HEADER_BODY
+	case messages.LoadMethodsMsg:
+		if msg.Err != nil {
+			// FIXME: TRATAR ERRO
+			return m, nil
+		}
+
+		var cmd tea.Cmd
+		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
+		return m, cmd
+
+		// SEND A REQUEST FROM HEADER TO MAIN MENU
+	case messages.LoadRequestMsg:
+		if msg.Err != nil {
+			// FIXME: TRATAR ERRO
+			return m, nil
+		}
+		var cmd tea.Cmd
+		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
 		return m, cmd
 	}
 

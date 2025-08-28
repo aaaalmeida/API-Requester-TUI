@@ -26,19 +26,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.cursor--
 			}
 		case "down":
-			if m.isOpened && m.cursor < len(m.options)-1 {
+			if m.isOpened && m.cursor < len(m.Options)-1 {
 				m.cursor++
 			}
 		}
 
+		// INITIAL UPDATE
 	case messages.LoadMethodsMsg:
 		if msg.Err != nil {
 			//TODO: tratar erro
 		}
 
 		// only load methods once
-		if m.options == nil {
-			m.options = ConvertMethodsToSelectOptions(msg.Methods)
+		if m.Options == nil {
+			m.Options = ConvertMethodsToSelectOptions(msg.Methods)
 		}
 	}
 

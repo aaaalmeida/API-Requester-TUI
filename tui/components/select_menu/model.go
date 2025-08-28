@@ -5,7 +5,7 @@ import (
 )
 
 type Model struct {
-	options      []selectable.SelectOption
+	Options      []selectable.SelectOption
 	cursor       int
 	selectedItem int
 	isOpened     bool
@@ -16,8 +16,8 @@ func NewModel() Model {
 	return Model{
 		cursor:       0,
 		selectedItem: 0,
-		options:      nil,
+		Options:      nil,
 		isOpened:     false,
-		width:        20,
+		width:        8,
 	}
 }

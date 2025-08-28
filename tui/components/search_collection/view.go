@@ -7,5 +7,6 @@ func (m model) View() string {
 		Border(lipgloss.ThickBorder()).
 		Width(30).
 		Height(3).
+		Align(lipgloss.Left, lipgloss.Center).
 		Render(m.textInput.View())
 }

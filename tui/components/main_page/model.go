@@ -4,6 +4,8 @@ import (
 	"api-requester/context"
 	"api-requester/tui/components/collection_menu"
 	"api-requester/tui/components/header"
+	"api-requester/tui/components/request_header_box"
+	"api-requester/tui/components/request_response_box"
 	"api-requester/tui/components/search_collection"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -32,6 +34,8 @@ func NewModel(ctx *context.AppContext) model {
 			search_collection.NewModel(ctx),
 			collection_menu.NewModel(ctx),
 			header.NewModel(ctx),
+			request_header_box.NewModel(ctx),
+			request_response_box.NewModel(ctx),
 		},
 	}
 }

@@ -1,4 +1,4 @@
-package tab_body
+package request_header_box
 
 import (
 	"github.com/charmbracelet/lipgloss"
@@ -10,7 +10,7 @@ func (m Model) View() string {
 
 	bodyBox := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
-		Width(60).
+		Width(65).
 		Height(25).
 		Render(lipgloss.JoinHorizontal(lipgloss.Top, selectMethod, inputUrl))
 

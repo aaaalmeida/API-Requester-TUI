@@ -4,8 +4,6 @@ import "github.com/charmbracelet/lipgloss"
 
 func (m Model) View() string {
 	return lipgloss.NewStyle().
-		Border(lipgloss.ThickBorder()).
-		Width(30).
-		Height(3).
+		Border(lipgloss.NormalBorder()).
 		Render(m.textInput.View())
 }

@@ -44,9 +44,9 @@ func (m model) View() string {
 	}
 
 	containerBoxStyle := lipgloss.NewStyle().
-		Height(m.height).
-		Width(m.width).
-		Padding(m.padding).
+		Height(HEIGHT).
+		Width(WIDTH).
+		Padding(PADDING).
 		Border(lipgloss.ThickBorder())
 
 	return containerBoxStyle.Render(t.String())

@@ -8,9 +8,13 @@ type Model struct {
 	textInput textinput.Model
 }
 
-func NewModel() Model {
+func NewModel(width int, placeholder *string) Model {
 	ti := textinput.New()
-	ti.Placeholder = "qweqw"
+	ti.Prompt = "#"
+	ti.Width = width
+	if placeholder != nil {
+		ti.Placeholder = *placeholder
+	}
 
 	return Model{
 		textInput: ti,

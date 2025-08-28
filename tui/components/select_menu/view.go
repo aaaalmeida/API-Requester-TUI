@@ -10,16 +10,16 @@ func (m Model) View() string {
 	normalStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Width(m.width)
 	selectedStyle := normalStyle.Inherit(lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2")))
 
-	if len(m.options) == 0 {
-		return selectedStyle.Render("qwe")
+	if len(m.Options) == 0 {
+		return selectedStyle.Render("vazio")
 	}
 
 	if !m.isOpened {
-		return selectedStyle.Render(m.options[m.selectedItem].Label())
+		return selectedStyle.Render(m.Options[m.selectedItem].Label())
 	}
 
 	var b strings.Builder
-	for i, opt := range m.options {
+	for i, opt := range m.Options {
 		if i == m.cursor {
 			b.WriteString(selectedStyle.Render(opt.Label()) + "\n")
 		} else {
