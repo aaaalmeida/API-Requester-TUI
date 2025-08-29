@@ -4,12 +4,22 @@ import tea "github.com/charmbracelet/bubbletea"
 
 type Model struct {
 	onPress tea.Cmd
-	text    *string
+	label   string
+	Focused bool
 }
 
-func NewModel(onPress tea.Cmd, text *string) Model {
+func NewModel(label string) Model {
 	return Model{
-		onPress: onPress,
-		text:    text,
+		// onPress: onPress,
+		label:   label,
+		Focused: false,
 	}
+}
+
+func (m Model) Focus() {
+	m.Focused = true
+}
+
+func (m Model) Blur() {
+	m.Focused = false
 }

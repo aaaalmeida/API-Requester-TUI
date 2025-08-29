@@ -7,16 +7,16 @@ import (
 )
 
 // Conversors
-func ConvertMethodsToSelectOptions(methods []method.Method) []selectable.SelectOption {
-	opts := make([]selectable.SelectOption, len(methods))
+func ConvertMethodsToSelectOptions(methods []method.Method) []selectable.Selectable {
+	opts := make([]selectable.Selectable, len(methods))
 	for i, m := range methods {
 		opts[i] = MethodOption{m}
 	}
 	return opts
 }
 
-func CollectionsToselectOptions(cols []collection.Collection) []selectable.SelectOption {
-	opts := make([]selectable.SelectOption, len(cols))
+func CollectionsToselectOptions(cols []collection.Collection) []selectable.Selectable {
+	opts := make([]selectable.Selectable, len(cols))
 	for i, c := range cols {
 		opts[i] = CollectionOption{c}
 	}

@@ -5,7 +5,7 @@ import (
 )
 
 type Model struct {
-	Options      []selectable.SelectOption
+	Options      []selectable.Selectable
 	cursor       int
 	selectedItem int
 	isOpened     bool

@@ -1,15 +1,15 @@
 package request_response_box
 
 import (
-	"api-requester/context"
+	"api-requester/domain/request"
 )
 
 type Model struct {
-	context *context.AppContext
+	request *request.Request
 }
 
-func NewModel(ctx *context.AppContext) Model {
+func NewModel() Model {
 	return Model{
-		context: ctx,
+		// request: request,
 	}
 }

@@ -2,7 +2,6 @@ package request_header_box
 
 import (
 	cmds "api-requester/tui/commands"
-	"api-requester/tui/components/select_menu"
 	"api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -13,9 +12,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "left":
+		case "up":
+			m.subcomponents[m.focusIndex].Blur()
+			if m.focusIndex > 0 {
+				m.focusIndex--
+			}
+			m.subcomponents[m.focusIndex].Focus()
 
-		case "right":
+		case "down":
+			m.subcomponents[m.focusIndex].Blur()
+			if m.focusIndex < len(m.subcomponents)-1 {
+				m.focusIndex++
+			}
+			m.subcomponents[m.focusIndex].Focus()
 		case "enter":
 		}
 
@@ -25,9 +34,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, cmds.FetchMethodsCmd(m.context)
 
-	// FETCHES METHODS FROM DB AND SEND TO SELECT COMPONENT
-	case messages.LoadMethodsMsg:
-		m.selectMethod.Options = select_menu.ConvertMethodsToSelectOptions(msg.Methods)
+		// FETCHES METHODS FROM DB AND SEND TO SELECT COMPONENT
+		// case messages.LoadMethodsMsg:
+		// 	m.selectMethod.Options = select_menu.ConvertMethodsToSelectOptions(msg.Methods)
 	}
 
 	return m, nil

@@ -8,7 +8,7 @@ func (m Model) View() string {
 		Border(lipgloss.ThickBorder()).
 		Width(65).
 		Height(25).
-		Render(" ")
+		Render("response box")
 
 	return bodyBox
 }
