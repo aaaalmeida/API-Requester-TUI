@@ -16,8 +16,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	var cmd tea.Cmd
-	m.textInput, cmd = m.textInput.Update(msg)
-	cmds = append(cmds, cmd)
+	var c tea.Cmd
+	m.textInput, c = m.textInput.Update(msg)
+	cmds = append(cmds, c)
 	return m, tea.Batch(cmds...)
 }

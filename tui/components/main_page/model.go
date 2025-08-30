@@ -11,25 +11,25 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// components index
-const SEARCH_COLLECTION_INDEX int = 0
-const COLLECTION_MENU_INDEX int = 1
-const HEADER_INDEX int = 2
-const REQUEST_HEADERS_INDEX int = 3
-const REQUEST_RESPONSE_INDEX int = 4
+// SearchCollectionIndex components index
+const SearchCollectionIndex int = 0
+const CollectionMenuIndex int = 1
+const HeaderIndex int = 2
+const RequestHeadersIndex int = 3
+const RequestResponseIndex int = 4
 
-// Main TUI component.
+// Model Main TUI component.
 // encapsulate everything
-type model struct {
-	active_component_index int
-	subcomponents          []tea.Model
-	context                *context.AppContext
+type Model struct {
+	activeComponentIndex int
+	subcomponents        []tea.Model
+	context              *context.AppContext
 }
 
-func NewModel(ctx *context.AppContext) model {
-	return model{
-		context:                ctx,
-		active_component_index: COLLECTION_MENU_INDEX,
+func NewModel(ctx *context.AppContext) Model {
+	return Model{
+		context:              ctx,
+		activeComponentIndex: CollectionMenuIndex,
 		subcomponents: []tea.Model{
 			search_collection.NewModel(ctx),
 			collection_menu.NewModel(ctx),

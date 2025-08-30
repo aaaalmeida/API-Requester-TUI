@@ -14,9 +14,9 @@ type Model struct {
 
 func NewModel(ctx *context.AppContext) Model {
 	return Model{
-		cursor:           0,
-		selectedTabIndex: 0,
-		requests:         nil,
+		cursor:           -1,
+		selectedTabIndex: -1,
+		requests:         make([]*request.Request, 0),
 		context:          ctx,
 	}
 }

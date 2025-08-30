@@ -2,20 +2,20 @@ package main_page
 
 import "github.com/charmbracelet/lipgloss"
 
-func (m model) View() string {
+func (m Model) View() string {
 
 	leftSide := lipgloss.JoinVertical(
 		lipgloss.Top,
-		m.subcomponents[SEARCH_COLLECTION_INDEX].View(),
-		m.subcomponents[COLLECTION_MENU_INDEX].View(),
+		m.subcomponents[SearchCollectionIndex].View(),
+		m.subcomponents[CollectionMenuIndex].View(),
 	)
 
 	rightSide := lipgloss.JoinVertical(
 		lipgloss.Top,
-		m.subcomponents[HEADER_INDEX].View(),
+		m.subcomponents[HeaderIndex].View(),
 		lipgloss.JoinHorizontal(lipgloss.Top,
-			m.subcomponents[REQUEST_HEADERS_INDEX].View(),
-			m.subcomponents[REQUEST_RESPONSE_INDEX].View()),
+			m.subcomponents[RequestHeadersIndex].View(),
+			m.subcomponents[RequestResponseIndex].View()),
 	)
 
 	return lipgloss.JoinHorizontal(lipgloss.Top, leftSide, rightSide)

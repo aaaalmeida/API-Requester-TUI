@@ -2,7 +2,7 @@ package collection_menu
 
 import (
 	cmd "api-requester/tui/commands"
-	messages "api-requester/tui/messages"
+	"api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -15,6 +15,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.LoadCollectionsMsg:
 		m.collections = msg.Collections
 		m.openCloseIndex = make([]bool, len(m.collections))
+		if len(m.collections) > 0 {
+			m.cursor = cursor{colIndex: 0, reqIndex: nil}
+		}
 		return m, nil
 
 	// USER PRESSED A KEY
@@ -44,9 +47,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 		case "enter", " ":
+			if len(m.collections) == 0 {
+				return m, nil
+			}
+
 			if m.cursor.reqIndex == nil {
-				// USER PRESSED ENTER IN A COLLECTION
+				// USER PRESSED ENTER A COLLECTION
 				selectedIndex := m.cursor.colIndex
+				if selectedIndex < 0 || selectedIndex >= len(m.collections) {
+					return m, nil
+				}
 				m.openCloseIndex[selectedIndex] = !m.openCloseIndex[selectedIndex]
 
 				selectedCollection := m.collections[selectedIndex]
@@ -57,13 +67,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					return m, cmd.UserPressEnterInCollectionCmd(m.context, selectedCollection.ID)
 				}
 			} else {
-				// USER PRESSED ENTER IN A REQUEST
+				// USER PRESSED ENTER A REQUEST
 				req := m.collections[m.cursor.colIndex].Requests[*m.cursor.reqIndex]
 				return m, cmd.SendRequestToTabCmd(req)
 			}
 		}
 
-	// USER PRESSED ENTER IN A COLLECTION.
+	// USER PRESSED ENTER A COLLECTION.
 	// IMPORT ALL REQUESTS FROM THIS COLLECTION.
 	case messages.LoadRequestFromCollectionMsg:
 		if msg.Err != nil {
@@ -102,7 +112,7 @@ func (m model) visibleItems() []cursor {
 	return items
 }
 
-// Compares value, not address
+// Equal Compares value, not address
 func (c cursor) Equal(other cursor) bool {
 	if c.colIndex != other.colIndex {
 		return false

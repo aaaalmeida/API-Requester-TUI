@@ -5,6 +5,7 @@ import (
 	"api-requester/domain/request"
 	"api-requester/shared/focusable"
 	"api-requester/tui/components/button"
+	"api-requester/tui/components/input"
 )
 
 type Model struct {
@@ -12,19 +13,18 @@ type Model struct {
 	request       *request.Request
 	subcomponents []focusable.Focusable
 	focusIndex    int
-	// selectMethod      select_menu.Model
-	// inputMethod       input.Model
-	// sendRequestButton button.Model
 }
 
 func NewModel(ctx *context.AppContext) Model {
+	pl := "teste"
+
+	inputModel := input.NewModel(40, &pl)
 	return Model{
 		context:    ctx,
 		request:    nil,
 		focusIndex: 0,
 		subcomponents: []focusable.Focusable{
-			// select_menu.NewModel(),
-			// input.NewModel(40, &pl),
+			&inputModel,
 			button.NewModel("qweqwe"),
 			button.NewModel("asdasdsa"),
 		},

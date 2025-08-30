@@ -8,6 +8,14 @@ type Model struct {
 	textInput textinput.Model
 }
 
+func (m *Model) Focus() {
+	m.textInput.Focus()
+}
+
+func (m *Model) Blur() {
+	m.textInput.Blur()
+}
+
 func NewModel(width int, placeholder *string) Model {
 	ti := textinput.New()
 	ti.Prompt = "#"
