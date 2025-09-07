@@ -1,15 +1,12 @@
 package request_response_box
 
-import (
-	"api-requester/domain/request"
-)
-
 type Model struct {
-	request *request.Request
+	// request *request.Request
+	body *string
 }
 
 func NewModel() Model {
 	return Model{
-		// request: request,
+		body: nil,
 	}
 }

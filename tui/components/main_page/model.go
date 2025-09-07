@@ -2,6 +2,7 @@ package main_page
 
 import (
 	"api-requester/context"
+	"api-requester/domain/collection"
 	"api-requester/tui/components/collection_menu"
 	"api-requester/tui/components/header"
 	"api-requester/tui/components/request_header_box"
@@ -23,12 +24,14 @@ const REQUEST_RESPONSE_INDEX int = 4
 type model struct {
 	active_component_index int
 	subcomponents          []tea.Model
+	collections            []*collection.Collection
 	context                *context.AppContext
 }
 
 func NewModel(ctx *context.AppContext) model {
 	return model{
 		context:                ctx,
+		collections:            nil,
 		active_component_index: COLLECTION_MENU_INDEX,
 		subcomponents: []tea.Model{
 			search_collection.NewModel(ctx),

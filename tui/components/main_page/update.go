@@ -34,18 +34,20 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-	// USER SEARCHED A COLLECTION
+	// INTIIAL CMD
 	case messages.LoadCollectionsMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
 			return m, nil
 		}
+		m.collections = msg.Collections
 
 		var cmd tea.Cmd
 		m.subcomponents[COLLECTION_MENU_INDEX], cmd = m.subcomponents[COLLECTION_MENU_INDEX].Update(msg)
 		return m, cmd
 
-	// SEND A REQUEST FROM COLLECTION_MENU TO HEADER
+	// SEND A REQUEST FROM COLLECTION_MENU TO HEADER AND REQUEST_HEADER
+	// ///////////////////////////// AQUI
 	case messages.SendRequestMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
@@ -54,9 +56,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		var cmd tea.Cmd
 		m.subcomponents[HEADER_INDEX], cmd = m.subcomponents[HEADER_INDEX].Update(msg)
+		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
 		return m, cmd
 
-		// FETCH METHODS FROM DB TO REQUEST_HEADER_BODY
+	// FETCH METHODS FROM DB TO REQUEST_HEADER_BODY
 	case messages.LoadMethodsMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
@@ -67,7 +70,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
 		return m, cmd
 
-		// SEND A REQUEST FROM HEADER TO MAIN MENU
+	// SEND A REQUEST FROM HEADER TO MAIN MENU
 	case messages.LoadRequestMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
@@ -75,6 +78,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		var cmd tea.Cmd
 		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
+		// TODO: mandar o request para request_response_box (ou não)
+		return m, cmd
+
+	// USER SEND AND LOADED A REQUEST
+	case messages.SendStringMsg:
+		if msg.Err != nil {
+			// FIXME: TRATAR ERRO
+			return m, nil
+		}
+		var cmd tea.Cmd
+		m.subcomponents[REQUEST_RESPONSE_INDEX], cmd = m.subcomponents[REQUEST_RESPONSE_INDEX].Update(msg)
+		// TODO: mandar o request para request_response_box (ou não)
+		return m, cmd
+
+	// USER PRESSED BUTTON IN REQUEST_HEADER TO SEND REQUEST
+	// CallRequestCmd from RequestHeader's Button
+	case messages.LoadResponseMsg:
+		var cmd tea.Cmd
+		m.subcomponents[REQUEST_RESPONSE_INDEX], cmd = m.subcomponents[REQUEST_RESPONSE_INDEX].Update(msg)
 		return m, cmd
 	}
 

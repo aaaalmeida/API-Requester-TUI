@@ -11,11 +11,11 @@ func (m Model) View() string {
 	selectedStyle := normalStyle.Inherit(lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2")))
 
 	if len(m.Options) == 0 {
-		return selectedStyle.Render("vazio")
+		return normalStyle.Render("---")
 	}
 
 	if !m.isOpened {
-		return selectedStyle.Render(m.Options[m.selectedItem].Label())
+		return normalStyle.Render(m.Options[m.selectedItem].Label())
 	}
 
 	var b strings.Builder

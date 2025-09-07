@@ -58,6 +58,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			} else {
 				// USER PRESSED ENTER IN A REQUEST
+				// SEND SendRequestMsg TO HEADER AND REQUEST_HEADER
 				req := m.collections[m.cursor.colIndex].Requests[*m.cursor.reqIndex]
 				return m, cmd.SendRequestToTabCmd(req)
 			}

@@ -6,7 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func SendStringFromInputCmd(s string) tea.Cmd {
+func SendStringToInputCmd(s string) tea.Cmd {
 	return func() tea.Msg {
 		return messages.SendStringMsg{
 			Err:   nil,

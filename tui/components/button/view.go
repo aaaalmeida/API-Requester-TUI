@@ -3,13 +3,12 @@ package button
 import "github.com/charmbracelet/lipgloss"
 
 func (m Model) View() string {
-	style := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
-	return style.Inherit(isFocusedStyle(m.Focused)).Render(m.label)
-}
+	normalStyle := lipgloss.NewStyle().Padding(0, 1).Border(lipgloss.NormalBorder())
+	focusedStyle := normalStyle.Inherit(lipgloss.NewStyle().Background(lipgloss.Color("2")))
 
-func isFocusedStyle(b bool) lipgloss.Style {
-	if b {
-		return lipgloss.NewStyle().Background(lipgloss.Color("4"))
+	if !m.isFocused {
+		return normalStyle.Render(m.text)
+	} else {
+		return focusedStyle.Render(m.text)
 	}
-	return lipgloss.NewStyle()
 }

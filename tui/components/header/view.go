@@ -16,7 +16,6 @@ func (m Model) View() string {
 	}
 
 	headerContent := lipgloss.JoinHorizontal(lipgloss.Left, tabs...)
-	headerBox := lipgloss.NewStyle().Border(lipgloss.ThickBorder()).Width(130).Height(3)
-
+	headerBox := lipgloss.NewStyle().Border(lipgloss.ThickBorder()).Width(132).Height(3)
 	return headerBox.Render(headerContent)
 }
