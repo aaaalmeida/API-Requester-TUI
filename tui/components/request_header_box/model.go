@@ -22,15 +22,15 @@ type Model struct {
 }
 
 func NewModel(ctx *context.AppContext) Model {
-	a := "url"
+	placeholder := "Inform url"
 	return Model{
 		context:                ctx,
 		request:                nil,
 		selectedComponentIndex: SELECT_MENU_INDEX,
 		cursor:                 SELECT_MENU_INDEX,
 		subcomponents: []focusable.Focusable{
-			select_menu.NewModel(),
-			input.NewModel(40, &a, ctx),
+			select_menu.NewModel(ctx),
+			input.NewModel(40, &placeholder, ctx),
 			button.NewModel(">>"),
 		},
 	}

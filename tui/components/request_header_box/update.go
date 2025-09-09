@@ -13,18 +13,20 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "left":
 			if m.cursor > 0 {
+				m.subcomponents[m.cursor].Blur()
 				m.cursor--
+				m.subcomponents[m.cursor].Focus()
 			}
 			return m, nil
 		case "right":
 			if m.cursor < len(m.subcomponents)-1 {
+				m.subcomponents[m.cursor].Blur()
 				m.cursor++
+				m.subcomponents[m.cursor].Focus()
 			}
 			return m, nil
 		case "enter", " ":
-			m.subcomponents[m.selectedComponentIndex].Blur()
 			m.selectedComponentIndex = m.cursor
-			m.subcomponents[m.selectedComponentIndex].Focus()
 
 			_, cmd := m.subcomponents[m.selectedComponentIndex].Update(msg)
 			return m, cmd
@@ -53,11 +55,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			messages.SendStringMsg{Value: msg.Request.Url})
 		return m, cmd
 
+	// INITIAL CMD
 	// FETCHES METHODS FROM DB AND SEND TO SELECT COMPONENT
 	case messages.LoadMethodsMsg:
 		m.subcomponents[SELECT_MENU_INDEX].Update(msg)
-		// return m, cmd
-		// m.selectMethod.Options = select_menu.ConvertMethodsToSelectOptions(msg.Methods)
+
+	case messages.SendStringMsg:
+		m.context.Logger.Println("ISSO Q VEIO DO INPUT", msg)
 	}
 
 	return m, nil

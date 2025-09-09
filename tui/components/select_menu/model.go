@@ -1,6 +1,7 @@
 package select_menu
 
 import (
+	"api-requester/context"
 	"api-requester/shared/selectable"
 )
 
@@ -11,15 +12,17 @@ type Model struct {
 	isOpened     bool
 	width        int
 	isFocused    bool
+	ctx          *context.AppContext
 }
 
-func NewModel() *Model {
+func NewModel(ctx *context.AppContext) *Model {
 	return &Model{
+		ctx:          ctx,
 		isFocused:    false,
+		isOpened:     false,
 		cursor:       0,
 		selectedItem: 0,
 		Options:      nil,
-		isOpened:     false,
 		width:        8,
 	}
 }

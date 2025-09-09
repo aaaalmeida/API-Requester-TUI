@@ -2,7 +2,6 @@ package collection_menu
 
 import (
 	"api-requester/utils"
-	"strconv"
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/tree"
@@ -10,8 +9,8 @@ import (
 
 // TODO: add style configuration
 func (m model) View() string {
-	selectedStyle := lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2"))
-	normalStyle := lipgloss.NewStyle()
+	selectedStyle := lipgloss.NewStyle().Bold(true)
+	normalStyle := lipgloss.NewStyle().Faint(true)
 
 	t := tree.New()
 
@@ -30,9 +29,8 @@ func (m model) View() string {
 		if len(col.Requests) > 0 && m.openCloseIndex[i] {
 			for j, r := range col.Requests {
 				label := utils.Truncate(
-					// TODO: mudar o id pelo nome do metodo
-					utils.Concatenate(strconv.Itoa(r.Method_id), r.Name), 20,
-				)
+					utils.Concatenate(
+						utils.TransformMethodIdToVerbColored(r.Method_id), r.Name), 35)
 
 				if m.cursor.colIndex == i && m.cursor.reqIndex != nil && *m.cursor.reqIndex == j {
 					subTree.Child(selectedStyle.Render(label))

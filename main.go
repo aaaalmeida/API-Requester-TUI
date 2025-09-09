@@ -7,10 +7,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-type Student struct {
-	name string
-}
-
 func main() {
 	ctx, err := context.NewAppContext()
 	if err != nil {

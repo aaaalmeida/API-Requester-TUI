@@ -10,8 +10,9 @@ func (m Model) View() string {
 	normalStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Width(m.width)
 	selectedStyle := normalStyle.Inherit(lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2")))
 
+	m.ctx.Logger.Println("OQ TEM NO SELECT", m.Options)
 	if len(m.Options) == 0 {
-		return normalStyle.Render("---")
+		return normalStyle.Render("vazio")
 	}
 
 	if !m.isOpened {

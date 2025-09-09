@@ -7,7 +7,7 @@ import (
 )
 
 type Model struct {
-	textInput *textinput.Model
+	textInput textinput.Model
 	isFocused bool
 	context   *context.AppContext
 }
@@ -22,7 +22,7 @@ func NewModel(width int, placeholder *string, ctx *context.AppContext) *Model {
 
 	return &Model{
 		context:   ctx,
-		textInput: &ti,
+		textInput: ti,
 		isFocused: false,
 	}
 }

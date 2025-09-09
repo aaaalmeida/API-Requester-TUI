@@ -7,5 +7,10 @@ import (
 )
 
 func (m model) Init() tea.Cmd {
-	return cmd.FetchCollectionsFromDBCmd(m.context)
+	var cmds []tea.Cmd
+	cmds = append(cmds,
+		cmd.FetchCollectionsFromDBCmd(m.context),
+		m.subcomponents[REQUEST_HEADERS_INDEX].Init())
+
+	return tea.Batch(cmds...)
 }

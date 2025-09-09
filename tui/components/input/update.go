@@ -1,26 +1,35 @@
 package input
 
 import (
-	cmd "api-requester/tui/commands"
+	cmds "api-requester/tui/commands"
 	messages "api-requester/tui/messages"
+	"api-requester/utils"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	// USER PRESS ENTER IN HEADER_COMPONENT
+	// USER PRESS ENTER IN COLLECTION_MENU
+	// Receive url and set in input
+	case messages.SendStringMsg:
+		m.textInput.SetValue(msg.Value)
+		return m, nil
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			return m, cmd.SendStringToInputCmd(m.textInput.Value())
+			return m, cmds.InputChangedCmd(m.textInput.Value())
+
+		case "backspace":
+			m.textInput.SetValue(utils.RemoveLastChar(m.textInput.Value()))
+
+		default:
+			if utils.IsValidUrlChar(msg.String()) {
+				m.textInput.SetValue(m.textInput.Value() + msg.String())
+			}
 		}
-
-	// USER PRESS ENTER IN HEADER_COMPONENT
-	// USER PRESS ENTER IN COLLECTION_MENU
-	case messages.SendStringMsg:
-		m.textInput.SetValue(msg.Value)
 	}
-
-	_, cmd := m.textInput.Update(msg)
-	return m, cmd
+	return m, nil
 }

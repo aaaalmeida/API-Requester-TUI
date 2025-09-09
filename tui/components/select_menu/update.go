@@ -11,14 +11,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter", " ":
-			if m.isOpened {
-				m.selectedItem = m.cursor
-				// TODO: create action with selected item
-
-				m.isOpened = false
-			} else {
-				m.isOpened = true
-			}
+			m.isOpened = !m.isOpened
 		case "esc":
 			m.isOpened = false
 		case "up":
@@ -33,13 +26,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// INITIAL UPDATE
 	case messages.LoadMethodsMsg:
+		m.ctx.Logger.Println("OQ VEIO NO CMD", msg)
+
 		if msg.Err != nil {
 			//TODO: tratar erro
 		}
-
 		// only load methods once
 		if m.Options == nil {
 			m.Options = ConvertMethodsToSelectOptions(msg.Methods)
+			m.ctx.Logger.Println("OQ SETOU NO MODEL", msg)
 		}
 	}
 

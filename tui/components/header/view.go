@@ -3,8 +3,8 @@ package header
 import "github.com/charmbracelet/lipgloss"
 
 func (m Model) View() string {
-	selectedStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Background(lipgloss.Color("2"))
-	normalStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder())
+	selectedStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Underline(true)
+	normalStyle := lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Faint(true)
 
 	var tabs []string
 	for i, req := range m.requests {

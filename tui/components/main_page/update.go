@@ -34,7 +34,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-	// INTIIAL CMD
+	// INITIAL CMD
+	// FETCH COLLECTIONS FROM DB TO MODEL ARRAY POINTER
 	case messages.LoadCollectionsMsg:
 		if msg.Err != nil {
 			// FIXME: TRATAR ERRO
@@ -46,19 +47,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.subcomponents[COLLECTION_MENU_INDEX], cmd = m.subcomponents[COLLECTION_MENU_INDEX].Update(msg)
 		return m, cmd
 
-	// SEND A REQUEST FROM COLLECTION_MENU TO HEADER AND REQUEST_HEADER
-	// ///////////////////////////// AQUI
-	case messages.SendRequestMsg:
-		if msg.Err != nil {
-			// FIXME: TRATAR ERRO
-			return m, nil
-		}
-
-		var cmd tea.Cmd
-		m.subcomponents[HEADER_INDEX], cmd = m.subcomponents[HEADER_INDEX].Update(msg)
-		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
-		return m, cmd
-
+	// INITIAL CMD
 	// FETCH METHODS FROM DB TO REQUEST_HEADER_BODY
 	case messages.LoadMethodsMsg:
 		if msg.Err != nil {
@@ -67,6 +56,18 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		var cmd tea.Cmd
+		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
+		return m, cmd
+
+	// SEND A REQUEST FROM COLLECTION_MENU TO HEADER AND REQUEST_HEADER
+	case messages.SendRequestMsg:
+		if msg.Err != nil {
+			// FIXME: TRATAR ERRO
+			return m, nil
+		}
+
+		var cmd tea.Cmd
+		m.subcomponents[HEADER_INDEX], cmd = m.subcomponents[HEADER_INDEX].Update(msg)
 		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
 		return m, cmd
 
