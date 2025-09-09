@@ -10,7 +10,6 @@ type Model struct {
 	cursor       int
 	selectedItem int
 	isOpened     bool
-	width        int
 	isFocused    bool
 	ctx          *context.AppContext
 }
@@ -23,7 +22,6 @@ func NewModel(ctx *context.AppContext) *Model {
 		cursor:       0,
 		selectedItem: 0,
 		Options:      nil,
-		width:        8,
 	}
 }
 

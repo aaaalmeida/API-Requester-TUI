@@ -1,6 +1,7 @@
 package request_header_box
 
 import (
+	"api-requester/shared/focusable"
 	cmds "api-requester/tui/commands"
 	"api-requester/tui/messages"
 
@@ -27,15 +28,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		case "enter", " ":
 			m.selectedComponentIndex = m.cursor
-
-			_, cmd := m.subcomponents[m.selectedComponentIndex].Update(msg)
+			// var cmd tea.Cmd
+			aux, cmd := m.subcomponents[m.selectedComponentIndex].Update(msg)
+			m.subcomponents[m.selectedComponentIndex] = aux.(focusable.Focusable)
 			return m, cmd
 		}
 
 	// USER PRESSED BUTTON TO SEND REQUEST
 	// CallRequestCmd from Button
 	case messages.ButtonPressedMsg:
-		if msg.Action == "Send Request" && m.request != nil {
+		if msg.Action == ">>" && m.request != nil {
 			return m, cmds.CallRequestCmd(m.request)
 		}
 

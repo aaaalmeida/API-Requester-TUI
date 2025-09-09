@@ -2,7 +2,7 @@ package button
 
 import "github.com/charmbracelet/lipgloss"
 
-func (m Model) View() string {
+func (m *Model) View() string {
 	if m.isFocused {
 		return lipgloss.NewStyle().Padding(0, 1).
 			Border(lipgloss.NormalBorder()).
