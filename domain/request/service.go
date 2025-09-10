@@ -262,6 +262,7 @@ func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) er
 	}
 
 	if len(queryClauses) == 0 {
+		// TODO: arrumar esse erro
 		return fmt.Errorf("nothing to update")
 	}
 
@@ -284,7 +285,7 @@ func CallRequest(req *Request) (string, error) {
 		body = strings.NewReader(req.Body.String)
 	}
 
-	method := http.MethodGet
+	var method string
 	switch req.Method_id {
 	case 2:
 		method = http.MethodPost
@@ -298,6 +299,10 @@ func CallRequest(req *Request) (string, error) {
 		method = http.MethodHead
 	case 7:
 		method = http.MethodTrace
+	case 8:
+		method = http.MethodOptions
+	default:
+		method = http.MethodGet
 	}
 
 	httpRequest, err := http.NewRequest(method, req.Url, body)

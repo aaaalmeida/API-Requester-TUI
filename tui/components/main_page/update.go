@@ -7,7 +7,6 @@ import (
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmds []tea.Cmd
 
 	switch msg := msg.(type) {
 	// GENERAL NAVEGATION
@@ -97,13 +96,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// CallRequestCmd from RequestHeader's Button
 	case messages.LoadResponseMsg:
 		var cmd tea.Cmd
+		m.context.Logger.Println("resposta do request na main", msg)
 		m.subcomponents[REQUEST_RESPONSE_INDEX], cmd = m.subcomponents[REQUEST_RESPONSE_INDEX].Update(msg)
 		return m, cmd
 	}
 
 	var cmd tea.Cmd
 	m.subcomponents[m.active_component_index], cmd = m.subcomponents[m.active_component_index].Update(msg)
-	cmds = append(cmds, cmd)
 
-	return m, tea.Batch(cmds...)
+	return m, cmd
 }

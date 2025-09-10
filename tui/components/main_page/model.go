@@ -38,7 +38,7 @@ func NewModel(ctx *context.AppContext) model {
 			collection_menu.NewModel(ctx),
 			header.NewModel(ctx),
 			request_header_box.NewModel(ctx),
-			request_response_box.NewModel(),
+			request_response_box.NewModel(ctx),
 		},
 	}
 }

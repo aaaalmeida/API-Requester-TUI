@@ -18,15 +18,11 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.isOpened = true
 			}
 
-		case "a":
-			m.ctx.Logger.Println("teste")
 		case "up":
-			m.ctx.Logger.Println("cima")
 			if m.isOpened && m.cursor > 0 {
 				m.cursor--
 			}
 		case "down":
-			m.ctx.Logger.Println("baixo")
 			if m.isOpened && m.cursor < len(m.Options)-1 {
 				m.cursor++
 			}

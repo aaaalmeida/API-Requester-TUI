@@ -13,22 +13,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "left":
-			if m.cursor > 0 {
-				m.subcomponents[m.cursor].Blur()
-				m.cursor--
-				m.subcomponents[m.cursor].Focus()
+			if m.selectedComponentIndex > 0 {
+				m.subcomponents[m.selectedComponentIndex].Blur()
+				m.selectedComponentIndex--
+				m.subcomponents[m.selectedComponentIndex].Focus()
 			}
 			return m, nil
+
 		case "right":
-			if m.cursor < len(m.subcomponents)-1 {
-				m.subcomponents[m.cursor].Blur()
-				m.cursor++
-				m.subcomponents[m.cursor].Focus()
+			if m.selectedComponentIndex < len(m.subcomponents)-1 {
+				m.subcomponents[m.selectedComponentIndex].Blur()
+				m.selectedComponentIndex++
+				m.subcomponents[m.selectedComponentIndex].Focus()
 			}
 			return m, nil
-		case "enter", " ":
-			m.selectedComponentIndex = m.cursor
-			// var cmd tea.Cmd
+
+		default:
 			aux, cmd := m.subcomponents[m.selectedComponentIndex].Update(msg)
 			m.subcomponents[m.selectedComponentIndex] = aux.(focusable.Focusable)
 			return m, cmd
@@ -38,6 +38,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// CallRequestCmd from Button
 	case messages.ButtonPressedMsg:
 		if msg.Action == ">>" && m.request != nil {
+			m.context.Logger.Println("vou chamar esse req", m.request)
 			return m, cmds.CallRequestCmd(m.request)
 		}
 
@@ -45,25 +46,29 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// UserPressEnterInRequestCmd from Header Component
 	case messages.LoadRequestMsg:
 		m.request = msg.Request
-		_, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
+		aux, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
 			messages.SendStringMsg{Value: msg.Request.Url})
+		m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
 		return m, cmd
 
 	// USER PRESSED ENTER IN COLLECTION_MENU
 	// SendRequestToTabCmd from Collection_menu
 	case messages.SendRequestMsg:
 		m.request = msg.Request
-		_, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
+		aux, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
 			messages.SendStringMsg{Value: msg.Request.Url})
+		m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
 		return m, cmd
 
 	// INITIAL CMD
 	// FETCHES METHODS FROM DB AND SEND TO SELECT COMPONENT
 	case messages.LoadMethodsMsg:
-		m.subcomponents[SELECT_MENU_INDEX].Update(msg)
+		// do not return cmd back or program will get in infinite loop
+		aux, _ := m.subcomponents[SELECT_MENU_INDEX].Update(msg)
+		m.subcomponents[SELECT_MENU_INDEX] = aux.(focusable.Focusable)
 
-	case messages.SendStringMsg:
-		m.context.Logger.Println("ISSO Q VEIO DO INPUT", msg)
+	case messages.InputChangedMsg:
+		m.request.Url = msg.Value
 	}
 
 	return m, nil

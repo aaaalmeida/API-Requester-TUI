@@ -26,8 +26,8 @@ func NewModel(ctx *context.AppContext) Model {
 	return Model{
 		context:                ctx,
 		request:                nil,
-		selectedComponentIndex: SELECT_MENU_INDEX,
-		cursor:                 SELECT_MENU_INDEX,
+		selectedComponentIndex: INPUT_URL_INDEX,
+		cursor:                 INPUT_URL_INDEX,
 		subcomponents: []focusable.Focusable{
 			select_menu.NewModel(ctx),
 			input.NewModel(40, &placeholder, ctx),

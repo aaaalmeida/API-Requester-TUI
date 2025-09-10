@@ -19,8 +19,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter":
-			return m, cmds.InputChangedCmd(m.textInput.Value())
+		// case "enter":
+		// 	m.context.Logger.Println("enter no input")
 
 		case "backspace":
 			m.textInput.SetValue(utils.RemoveLastChar(m.textInput.Value()))
@@ -28,6 +28,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		default:
 			if utils.IsValidUrlChar(msg.String()) {
 				m.textInput.SetValue(m.textInput.Value() + msg.String())
+				return m, cmds.InputChangedCmd(m.textInput.Value())
 			}
 		}
 	}

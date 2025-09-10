@@ -7,25 +7,42 @@ import (
 )
 
 func (m Model) View() string {
-	normalStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder())
+	normalStyle := lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Width(8).Align(lipgloss.Center)
 	selectedStyle := normalStyle.Inherit(lipgloss.NewStyle().Bold(true).Background(lipgloss.Color("2")))
 
+	// empty
 	if len(m.Options) == 0 {
-		return normalStyle.Render("---")
+		if m.isFocused {
+			return normalStyle.Render("---")
+		} else {
+			return selectedStyle.Render("---")
+		}
 	}
 
 	if !m.isOpened {
-		return normalStyle.Render(m.Options[m.selectedItem].Label())
+		if m.isFocused {
+			return selectedStyle.Render(m.Options[m.selectedItem].Label())
+		} else {
+			return normalStyle.Render(m.Options[m.selectedItem].Label())
+		}
 	}
 
 	var b strings.Builder
 	for i, opt := range m.Options {
 		if i == m.cursor {
-			b.WriteString(selectedStyle.Render(opt.Label()) + "\n")
+			b.WriteString(opt.Label() + "---\n")
 		} else {
-			b.WriteString(normalStyle.Render(opt.Label()) + "\n")
+			b.WriteString(opt.Label() + "\n")
 		}
 	}
+	return normalStyle.Render(b.String())
 
-	return b.String()
+	// var b strings.Builder
+	// for i, opt := range m.Options {
+	// 	if i == m.cursor {
+	// 		b.WriteString(selectedStyle.Render(opt.Label()) + "\n")
+	// 	} else {
+	// 		b.WriteString(normalStyle.Render(opt.Label()) + "\n")
+	// 	}
+	// }
 }

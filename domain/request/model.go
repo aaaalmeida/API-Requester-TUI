@@ -5,6 +5,16 @@ import (
 	"fmt"
 )
 
+type BodyType int
+
+const (
+	BodyTypeNull = iota
+	BodyTypePlainText
+	BodyTypeJSON
+	BodyTypeHTML
+	BodyTypeFile
+)
+
 type Request struct {
 	ID            int
 	Name          string
