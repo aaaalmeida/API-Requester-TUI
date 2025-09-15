@@ -69,6 +69,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case messages.LoadRequestFromCollectionMsg:
 		if msg.Err != nil {
 			// TODO: tratar erro
+			m.context.Logger.Println(msg.Err)
 			return m, nil
 		}
 

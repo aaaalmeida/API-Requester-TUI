@@ -4,7 +4,6 @@ import (
 	"api-requester/context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -16,40 +15,31 @@ import (
 *	be pass as nil. Created_at and updated_at are automatically set as local date time.
 *	Returns pointer to created request.
  */
-func AddRequest(ctx *context.AppContext, name, url string,
-	method_id, collection_id int,
-	status_codePointer *int,
-	headersPointer, bodyPointer *string) (*Request, error) {
-
+func AddRequest(ctx *context.AppContext, req *Request) (*Request, error) {
 	stmt, err := ctx.DB.Prepare(`
-		INSERT INTO request(name, url, method_id, collection_id, status_code, headers, body)
-		 VALUES (?, ?, ?, ?, ?, ?, ?);`)
+		INSERT INTO request
+		(name, url, method_id, collection_id, status_code, headers, body, body_type)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?);`)
 	if err != nil {
 		return nil, err
 	}
 	defer stmt.Close()
 
-	var status_code sql.NullInt16
-	if status_codePointer != nil {
-		status_code = sql.NullInt16{Valid: true, Int16: int16(*status_codePointer)}
-	} else {
-		status_code = sql.NullInt16{Valid: false}
+	headers, err := json.Marshal(req.Headers)
+	if err != nil {
+		return nil, err
 	}
 
-	var headers, body sql.NullString
-	if headersPointer != nil {
-		headers = sql.NullString{Valid: true, String: *headersPointer}
-	} else {
-		headers = sql.NullString{Valid: false}
-	}
+	result, err := stmt.Exec(
+		req.Name,
+		req.Url,
+		req.Method_id,
+		req.Collection_id,
+		req.Expected_Status_code,
+		headers,
+		req.Body,
+		req.BodyType)
 
-	if bodyPointer != nil {
-		body = sql.NullString{Valid: true, String: *bodyPointer}
-	} else {
-		body = sql.NullString{Valid: false}
-	}
-
-	result, err := stmt.Exec(name, url, method_id, collection_id, status_code, headers, body)
 	if err != nil {
 		return nil, err
 	}
@@ -59,123 +49,116 @@ func AddRequest(ctx *context.AppContext, name, url string,
 		return nil, err
 	}
 
-	return &Request{
-		ID:            int(lastId),
-		Name:          name,
-		Url:           url,
-		Method_id:     method_id,
-		Collection_id: collection_id,
-		Status_code:   status_code,
-		Headers:       headers,
-		Body:          body,
-		Created_at:    time.Now().String(),
-		Updated_at:    time.Now().String(),
-	}, nil
+	req.ID = int(lastId)
+	req.Created_at = time.Now().String()
+	req.Updated_at = time.Now().String()
+
+	return req, nil
 }
 
+// /*
+// *	Return array of all requests.
+//  */
+// func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
+// 	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
+// 	 status_code, headers, body, created_at, updated_at FROM request;`)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer rows.Close()
+
+// 	var requests []Request
+// 	for rows.Next() {
+// 		var req Request
+// 		err := rows.Scan(
+// 			&req.ID,
+// 			&req.Name,
+// 			&req.Url,
+// 			&req.Method_id,
+// 			&req.Collection_id,
+// 			&req.Status_code,
+// 			&req.Headers,
+// 			&req.Body,
+// 			&req.Created_at,
+// 			&req.Updated_at,
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		requests = append(requests, req)
+// 	}
+// 	return requests, nil
+// }
+
+// /*
+// *	Return array of all requests with matching method_id.
+//  */
+// func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request, error) {
+// 	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
+// 	 status_code, headers, body, created_at, updated_at FROM request;`, method_id)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+
+// 	defer rows.Close()
+
+// 	var requests []Request
+// 	for rows.Next() {
+// 		var req Request
+// 		err := rows.Scan(
+// 			&req.ID,
+// 			&req.Name,
+// 			&req.Url,
+// 			&req.Method_id,
+// 			&req.Collection_id,
+// 			&req.Status_code,
+// 			&req.Headers,
+// 			&req.Body,
+// 			&req.Created_at,
+// 			&req.Updated_at,
+// 		)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+
+// 		requests = append(requests, req)
+// 	}
+// 	return requests, nil
+// }
+
+// /*
+// *	Return request with matching id or ErrNoRows if not found.
+//  */
+// func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error) {
+// 	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id,
+// 	 status_code, headers, body, created_at, updated_at FROM request;`, request_id)
+
+// 	var request Request
+// 	err := row.Scan(
+// 		&request.ID,
+// 		&request.Name,
+// 		&request.Url,
+// 		&request.Method_id,
+// 		&request.Collection_id,
+// 		&request.Status_code,
+// 		&request.Headers,
+// 		&request.Body,
+// 		&request.Created_at,
+// 		&request.Updated_at,
+// 	)
+
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	return &request, nil
+// }
+
 /*
-*	Return array of all requests.
- */
-func GetAllRequest(ctx *context.AppContext) ([]Request, error) {
-	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
-	 status_code, headers, body, created_at, updated_at FROM request;`)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var requests []Request
-	for rows.Next() {
-		var req Request
-		err := rows.Scan(
-			&req.ID,
-			&req.Name,
-			&req.Url,
-			&req.Method_id,
-			&req.Collection_id,
-			&req.Status_code,
-			&req.Headers,
-			&req.Body,
-			&req.Created_at,
-			&req.Updated_at,
-		)
-		if err != nil {
-			return nil, err
-		}
-		requests = append(requests, req)
-	}
-	return requests, nil
-}
-
-/*
-*	Return array of all requests with matching method_id.
- */
-func SearchRequestByMethodId(ctx *context.AppContext, method_id int) ([]Request, error) {
-	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
-	 status_code, headers, body, created_at, updated_at FROM request;`, method_id)
-	if err != nil {
-		return nil, err
-	}
-
-	defer rows.Close()
-
-	var requests []Request
-	for rows.Next() {
-		var req Request
-		err := rows.Scan(
-			&req.ID,
-			&req.Name,
-			&req.Url,
-			&req.Method_id,
-			&req.Collection_id,
-			&req.Status_code,
-			&req.Headers,
-			&req.Body,
-			&req.Created_at,
-			&req.Updated_at,
-		)
-		if err != nil {
-			return nil, err
-		}
-
-		requests = append(requests, req)
-	}
-	return requests, nil
-}
-
-/*
-*	Return request with matching id or ErrNoRows if not found.
- */
-func SearchRequestById(ctx *context.AppContext, request_id int) (*Request, error) {
-	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id,
-	 status_code, headers, body, created_at, updated_at FROM request;`, request_id)
-
-	var request Request
-	err := row.Scan(
-		&request.ID,
-		&request.Name,
-		&request.Url,
-		&request.Method_id,
-		&request.Collection_id,
-		&request.Status_code,
-		&request.Headers,
-		&request.Body,
-		&request.Created_at,
-		&request.Updated_at,
-	)
-
-	if err != nil {
-		return nil, err
-	}
-	return &request, nil
-}
-
-/*
-*	Return array of all requests with matching collection_id.
- */
+Return array of all requests with matching collection_id.
+*/
 func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]*Request, error) {
 	rows, err := ctx.DB.Query(`SELECT id, name, url, method_id, collection_id,
-	 status_code, headers, body, created_at, updated_at FROM request WHERE collection_id = ?;`, collection_id)
+	 status_code, headers, body, body_type, created_at, updated_at FROM request WHERE collection_id = ?;`, collection_id)
 	if err != nil {
 		return nil, err
 	}
@@ -185,15 +168,18 @@ func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]
 	var requests []*Request
 	for rows.Next() {
 		var req Request
+
+		var headers sql.NullString
 		err := rows.Scan(
 			&req.ID,
 			&req.Name,
 			&req.Url,
 			&req.Method_id,
 			&req.Collection_id,
-			&req.Status_code,
-			&req.Headers,
+			&req.Expected_Status_code,
+			&headers,
 			&req.Body,
+			&req.BodyType,
 			&req.Created_at,
 			&req.Updated_at,
 		)
@@ -201,89 +187,95 @@ func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]
 			return nil, err
 		}
 
+		if headers.Valid {
+			var h map[string]string
+			if err := json.Unmarshal([]byte(headers.String), &h); err != nil {
+				return nil, err
+			}
+			req.Headers = h
+		} else {
+			req.Headers = make(map[string]string) // empty
+		}
+
 		requests = append(requests, &req)
 	}
 	return requests, nil
 }
 
-// TODO: remover referencia do ponteiro da lista de requests durante execução
-/*
-*	Delete request with matching id from database.
- */
-func DeleteRequestById(ctx *context.AppContext, request_id int) error {
-	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
-	if err != nil {
-		return err
-	}
+// // TODO: remover referencia do ponteiro da lista de requests durante execução
+// /*
+// *	Delete request with matching id from database.
+//  */
+// func DeleteRequestById(ctx *context.AppContext, request_id int) error {
+// 	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
+// 	if err != nil {
+// 		return err
+// 	}
 
-	defer stmt.Close()
+// 	defer stmt.Close()
 
-	_, err = stmt.Exec(request_id)
-	return err
-}
+// 	_, err = stmt.Exec(request_id)
+// 	return err
+// }
 
-/*
-*	Update and saves request in db. This DOES NOT override uninformed values, only replaces new ones.
-*	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
-*	to update then manually. Updated_at is automatic updated to local date time.
- */
-func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) error {
-	queryClauses := []string{}
-	args := []interface{}{}
+// /*
+// *	Update and saves request in db. This DOES NOT override uninformed values, only replaces new ones.
+// *	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
+// *	to update then manually. Updated_at is automatic updated to local date time.
+//  */
+// func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) error {
+// 	queryClauses := []string{}
+// 	args := []interface{}{}
 
-	if request.Name != "" {
-		queryClauses = append(queryClauses, "name = ?")
-		args = append(args, request.Name)
-	}
+// 	if request.Name != "" {
+// 		queryClauses = append(queryClauses, "name = ?")
+// 		args = append(args, request.Name)
+// 	}
 
-	if request.Url != "" {
-		queryClauses = append(queryClauses, "url = ?")
-		args = append(args, request.Url)
-	}
+// 	if request.Url != "" {
+// 		queryClauses = append(queryClauses, "url = ?")
+// 		args = append(args, request.Url)
+// 	}
 
-	if request.Method_id != 0 {
-		queryClauses = append(queryClauses, "method_id = ?")
-		args = append(args, request.Method_id)
-	}
+// 	if request.Method_id != 0 {
+// 		queryClauses = append(queryClauses, "method_id = ?")
+// 		args = append(args, request.Method_id)
+// 	}
 
-	if request.Status_code.Valid {
-		queryClauses = append(queryClauses, "status_code = ?")
-		args = append(args, request.Status_code.Int16)
-	}
+// 	if request.Status_code.Valid {
+// 		queryClauses = append(queryClauses, "status_code = ?")
+// 		args = append(args, request.Status_code.Int16)
+// 	}
 
-	if request.Headers.Valid {
-		queryClauses = append(queryClauses, "headers = ?")
-		args = append(args, request.Headers.String)
-	}
+// 	if request.Headers.Valid {
+// 		queryClauses = append(queryClauses, "headers = ?")
+// 		args = append(args, request.Headers.String)
+// 	}
 
-	if request.Body.Valid {
-		queryClauses = append(queryClauses, "body = ?")
-		args = append(args, request.Body.String)
-	}
+// 	if request.Body.Valid {
+// 		queryClauses = append(queryClauses, "body = ?")
+// 		args = append(args, request.Body.String)
+// 	}
 
-	if len(queryClauses) == 0 {
-		// TODO: arrumar esse erro
-		return fmt.Errorf("nothing to update")
-	}
+// 	if len(queryClauses) == 0 {
+// 		// TODO: arrumar esse erro
+// 		return fmt.Errorf("nothing to update")
+// 	}
 
-	queryClauses = append(queryClauses, "updated_at = ?")
-	args = append(args, time.Now().Format(time.DateTime))
+// 	queryClauses = append(queryClauses, "updated_at = ?")
+// 	args = append(args, time.Now().Format(time.DateTime))
 
-	query := fmt.Sprintf("UPDATE request SET %s WHERE id = ?;", strings.Join(queryClauses, ", "))
-	args = append(args, request_id)
-	_, err := ctx.DB.Exec(query, args...)
-	return err
-}
+// 	query := fmt.Sprintf("UPDATE request SET %s WHERE id = ?;", strings.Join(queryClauses, ", "))
+// 	args = append(args, request_id)
+// 	_, err := ctx.DB.Exec(query, args...)
+// 	return err
+// }
 
 /*
 *	Call HTTP Request using Headers (if valid). Returns body stringified.
  */
 func CallRequest(req *Request) (string, error) {
-	// create request body if it is valid
-	var body = strings.NewReader("")
-	if req.Body.Valid {
-		body = strings.NewReader(req.Body.String)
-	}
+	body := strings.NewReader(string(req.Body))
 
 	var method string
 	switch req.Method_id {
@@ -310,21 +302,14 @@ func CallRequest(req *Request) (string, error) {
 		return "", err
 	}
 
-	// TODO: depois que implementar a TUI, remover esse header
-	if req.Body.Valid {
-		httpRequest.Header.Set("Content-type", "application/json")
+	for key, value := range req.Headers {
+		httpRequest.Header.Set(key, value)
 	}
 
-	// set request headers if valid
-	if req.Headers.Valid {
-		var headersMap map[string]string
-		if err := json.Unmarshal([]byte(req.Headers.String), &headersMap); err != nil {
-			return "", err
-		}
-
-		for key, value := range headersMap {
-			httpRequest.Header.Set(key, value)
-		}
+	// If req.Headers dont have content type and BodyType is different than null,
+	// automatically add it based on req.BodyType
+	if _, ok := req.Headers["Content-Type"]; !ok && req.BodyType != BodyTypeNull {
+		httpRequest.Header.Set("Content-Type", req.BodyType.String())
 	}
 
 	client := &http.Client{}
@@ -338,15 +323,15 @@ func CallRequest(req *Request) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
 	return string(responseBody), nil
 }
 
-/*
-*	Call HTTP Request with matching id. Returns body stringified.
- */
+// /*
+//   - Call HTTP Request with matching id. Returns body stringified.
+//     */
 func CallRequestById(ctx *context.AppContext, request_id int) (string, error) {
-	row := ctx.DB.QueryRow("SELECT * FROM request WHERE id = ?;", request_id)
+	row := ctx.DB.QueryRow(`SELECT id, name, url, method_id, collection_id,
+	 status_code, headers, body, body_type, created_at, updated_at FROM request WHERE id = ?;`, request_id)
 
 	var request Request
 	err := row.Scan(
@@ -355,9 +340,10 @@ func CallRequestById(ctx *context.AppContext, request_id int) (string, error) {
 		&request.Name,
 		&request.Method_id,
 		&request.Collection_id,
-		&request.Status_code,
+		&request.Expected_Status_code,
 		&request.Headers,
 		&request.Body,
+		&request.BodyType,
 		&request.Created_at,
 		&request.Updated_at)
 

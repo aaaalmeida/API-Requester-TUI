@@ -1,24 +1,26 @@
 package utils
 
+import "net/http"
+
 func TransformMethodIdToVerb(id int) string {
 	var verb string
 	switch id {
 	case 1:
-		verb = "GET"
+		verb = http.MethodGet
 	case 2:
-		verb = "POST"
+		verb = http.MethodPost
 	case 3:
-		verb = "PUT"
+		verb = http.MethodPut
 	case 4:
-		verb = "DELETE"
+		verb = http.MethodDelete
 	case 5:
-		verb = "PATCH"
+		verb = http.MethodPatch
 	case 6:
-		verb = "HEAD"
+		verb = http.MethodHead
 	case 7:
-		verb = "TRACE"
+		verb = http.MethodTrace
 	case 8:
-		verb = "OPTIONS"
+		verb = http.MethodOptions
 	}
 	return verb
 }

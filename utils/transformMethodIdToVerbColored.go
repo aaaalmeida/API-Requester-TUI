@@ -1,5 +1,7 @@
 package utils
 
+import "net/http"
+
 func TransformMethodIdToVerbColored(id int) string {
 	var Reset = "\033[0m"
 
@@ -14,24 +16,23 @@ func TransformMethodIdToVerbColored(id int) string {
 
 	var verb string
 	switch id {
-	default:
-		verb = Green + "GET"
+	case 1:
+		verb = Green + http.MethodGet
 	case 2:
-		verb = Blue + "POST"
+		verb = Blue + http.MethodPost
 	case 3:
-		verb = Yellow + "PUT"
+		verb = Yellow + http.MethodPut
 	case 4:
-		verb = Red + "DELETE"
+		verb = Red + http.MethodDelete
 	case 5:
-		verb = Magenta + "PATCH"
+		verb = Magenta + http.MethodPatch
 	case 6:
-		verb = Cyan + "HEAD"
+		verb = Cyan + http.MethodHead
 	case 7:
-		verb = Gray + "TRACE"
+		verb = Gray + http.MethodTrace
 	case 8:
-		verb = Black + "OPTIONS"
+		verb = Black + http.MethodOptions
 	}
-
 	verb += Reset
 	return verb
 }

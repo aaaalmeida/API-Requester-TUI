@@ -96,7 +96,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// CallRequestCmd from RequestHeader's Button
 	case messages.LoadResponseMsg:
 		var cmd tea.Cmd
-		m.context.Logger.Println("resposta do request na main", msg)
 		m.subcomponents[REQUEST_RESPONSE_INDEX], cmd = m.subcomponents[REQUEST_RESPONSE_INDEX].Update(msg)
 		return m, cmd
 	}

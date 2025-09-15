@@ -38,7 +38,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// CallRequestCmd from Button
 	case messages.ButtonPressedMsg:
 		if msg.Action == ">>" && m.request != nil {
-			m.context.Logger.Println("vou chamar esse req", m.request)
 			return m, cmds.CallRequestCmd(m.request)
 		}
 
