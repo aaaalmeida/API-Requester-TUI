@@ -5,20 +5,24 @@ import (
 )
 
 func (m Model) View() string {
-	// selectMethod := m.selectMethod.View()
-	// inputUrl := m.inputUrl.View()
-	// buttonSendRequest := m.buttonSendRequest.View()
+	var topsideContent, bottomsideContent []string
 
-	var views []string
-	for _, sc := range m.subcomponents {
-		views = append(views, sc.View())
-	}
+	topsideContent = append(topsideContent,
+		m.subcomponents[SELECT_MENU_INDEX].View(),
+		m.subcomponents[INPUT_URL_INDEX].View(),
+		m.subcomponents[SEND_REQUEST_BUTTON_INDEX].View())
+	topsideView := lipgloss.JoinHorizontal(lipgloss.Top, topsideContent...)
+
+	// TODO: adicionar view do body da request depois que estiver pronto
+	bottomsideContent = append(bottomsideContent,
+		m.subcomponents[HEADER_TABLE_INDEX].View())
+	bottomsideView := lipgloss.JoinHorizontal(lipgloss.Top, bottomsideContent...)
 
 	bodyBox := lipgloss.NewStyle().
 		Border(lipgloss.ThickBorder()).
 		Width(65).
 		Height(25).
-		Render(lipgloss.JoinHorizontal(lipgloss.Top, views...))
+		Render(lipgloss.JoinVertical(lipgloss.Top, topsideView, bottomsideView))
 
 	return bodyBox
 }

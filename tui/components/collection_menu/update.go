@@ -21,6 +21,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		// captures which key was pressed
 		switch msg.String() {
+		case "delete", "backspace":
+			if m.cursor.reqIndex != nil {
+				// delete request
+				c := m.cursor
+				return m, cmd.UserPressDeleteInRequestCmd(m.collections[c.colIndex].Requests[*c.reqIndex])
+			} else {
+				// delete collection
+			}
 		case "up":
 			items := m.visibleItems()
 			for i := range items {

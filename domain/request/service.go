@@ -4,6 +4,7 @@ import (
 	"api-requester/context"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -203,73 +204,73 @@ func SearchRequestByCollectionId(ctx *context.AppContext, collection_id int) ([]
 }
 
 // // TODO: remover referencia do ponteiro da lista de requests durante execução
-// /*
-// *	Delete request with matching id from database.
-//  */
-// func DeleteRequestById(ctx *context.AppContext, request_id int) error {
-// 	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
-// 	if err != nil {
-// 		return err
-// 	}
+/*
+*	Delete request with matching id from database.
+ */
+func DeleteRequestById(ctx *context.AppContext, request_id int) error {
+	stmt, err := ctx.DB.Prepare("DELETE FROM request WHERE id = ?;")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
 
-// 	defer stmt.Close()
+	_, err = stmt.Exec(request_id)
+	return err
+}
 
-// 	_, err = stmt.Exec(request_id)
-// 	return err
-// }
+/*
+*	Update and saves request in db. This DOES NOT override not informed values, only replaces new ones.
+*	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
+*	to update then manually. Updated_at is automatic updated to local date time.
+ */
+func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) error {
+	queryClauses := []string{}
+	args := []interface{}{}
 
-// /*
-// *	Update and saves request in db. This DOES NOT override uninformed values, only replaces new ones.
-// *	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
-// *	to update then manually. Updated_at is automatic updated to local date time.
-//  */
-// func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) error {
-// 	queryClauses := []string{}
-// 	args := []interface{}{}
+	if request.Name != "" {
+		queryClauses = append(queryClauses, "name = ?")
+		args = append(args, request.Name)
+	}
 
-// 	if request.Name != "" {
-// 		queryClauses = append(queryClauses, "name = ?")
-// 		args = append(args, request.Name)
-// 	}
+	if request.Url != "" {
+		queryClauses = append(queryClauses, "url = ?")
+		args = append(args, request.Url)
+	}
 
-// 	if request.Url != "" {
-// 		queryClauses = append(queryClauses, "url = ?")
-// 		args = append(args, request.Url)
-// 	}
+	if request.Method_id != 0 {
+		queryClauses = append(queryClauses, "method_id = ?")
+		args = append(args, request.Method_id)
+	}
 
-// 	if request.Method_id != 0 {
-// 		queryClauses = append(queryClauses, "method_id = ?")
-// 		args = append(args, request.Method_id)
-// 	}
+	if request.Expected_Status_code != nil {
+		queryClauses = append(queryClauses, "status_code = ?")
+		args = append(args, request.Expected_Status_code)
+	}
 
-// 	if request.Status_code.Valid {
-// 		queryClauses = append(queryClauses, "status_code = ?")
-// 		args = append(args, request.Status_code.Int16)
-// 	}
+	if request.Headers != nil {
+		queryClauses = append(queryClauses, "headers = ?")
+		headers, _ := json.Marshal(request.Headers)
+		args = append(args, headers)
+	}
 
-// 	if request.Headers.Valid {
-// 		queryClauses = append(queryClauses, "headers = ?")
-// 		args = append(args, request.Headers.String)
-// 	}
+	if request.Body != nil {
+		queryClauses = append(queryClauses, "body = ?")
+		args = append(args, string(request.Body))
+	}
 
-// 	if request.Body.Valid {
-// 		queryClauses = append(queryClauses, "body = ?")
-// 		args = append(args, request.Body.String)
-// 	}
+	if len(queryClauses) == 0 {
+		// TODO: arrumar esse erro
+		return fmt.Errorf("nothing to update")
+	}
 
-// 	if len(queryClauses) == 0 {
-// 		// TODO: arrumar esse erro
-// 		return fmt.Errorf("nothing to update")
-// 	}
+	queryClauses = append(queryClauses, "updated_at = ?")
+	args = append(args, time.Now().Format(time.DateTime))
 
-// 	queryClauses = append(queryClauses, "updated_at = ?")
-// 	args = append(args, time.Now().Format(time.DateTime))
-
-// 	query := fmt.Sprintf("UPDATE request SET %s WHERE id = ?;", strings.Join(queryClauses, ", "))
-// 	args = append(args, request_id)
-// 	_, err := ctx.DB.Exec(query, args...)
-// 	return err
-// }
+	query := fmt.Sprintf("UPDATE request SET %s WHERE id = ?;", strings.Join(queryClauses, ", "))
+	args = append(args, request_id)
+	_, err := ctx.DB.Exec(query, args...)
+	return err
+}
 
 /*
 *	Call HTTP Request using Headers (if valid). Returns body stringified.

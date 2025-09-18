@@ -12,6 +12,8 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "delete", "backspace":
+			return m, commands.UserPressDeleteInRequestCmd(m.requests[m.cursor])
 		case "enter", " ":
 			m.selectedTabIndex = m.cursor
 			return m, commands.UserPressEnterInRequestCmd(m.requests[m.selectedTabIndex])

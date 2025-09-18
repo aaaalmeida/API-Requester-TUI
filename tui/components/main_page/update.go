@@ -7,7 +7,6 @@ import (
 )
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-
 	switch msg := msg.(type) {
 	// GENERAL NAVEGATION
 	case tea.KeyMsg:
@@ -98,6 +97,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		var cmd tea.Cmd
 		m.subcomponents[REQUEST_RESPONSE_INDEX], cmd = m.subcomponents[REQUEST_RESPONSE_INDEX].Update(msg)
 		return m, cmd
+
+	// case messages.DeleteRequestMsg:
+	// 	var headerCmd, menuCmd tea.Cmd
+	// 	m.subcomponents[HEADER_INDEX], headerCmd = m.subcomponents[HEADER_INDEX].Update(
+	// 		cmds.DeleteRequestCmd(m.context, m.collections[m.s]))
+	// 	m.subcomponents[COLLECTION_MENU_INDEX], menuCmd = m.subcomponents[COLLECTION_MENU_INDEX].Update(
+	// 		cmds.DeleteRequestCmd(m.context, &m.requests, m.selectedTabIndex))
+	// 	return m, tea.Batch(headerCmd, menuCmd)
+
+	case messages.UpdateRequestMsg:
+		if msg.Err != nil {
+			m.context.Logger.Println(msg.Err)
+		}
 	}
 
 	var cmd tea.Cmd

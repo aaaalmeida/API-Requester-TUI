@@ -10,8 +10,7 @@ import (
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	// USER PRESS ENTER IN HEADER_COMPONENT
-	// USER PRESS ENTER IN COLLECTION_MENU
+	// USER PRESS ENTER IN HEADER_COMPONENT OR USER PRESS ENTER IN COLLECTION_MENU
 	// Receive url and set in input
 	case messages.SendStringMsg:
 		m.textInput.SetValue(msg.Value)
@@ -19,8 +18,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		// case "enter":
-		// 	m.context.Logger.Println("enter no input")
+		case "enter":
+			return m, cmds.InputChangedCmd(m.textInput.Value())
 
 		case "backspace":
 			m.textInput.SetValue(utils.RemoveLastChar(m.textInput.Value()))

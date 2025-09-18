@@ -13,11 +13,13 @@ import (
 )
 
 // components index
-const SEARCH_COLLECTION_INDEX int = 0
-const COLLECTION_MENU_INDEX int = 1
-const HEADER_INDEX int = 2
-const REQUEST_HEADERS_INDEX int = 3
-const REQUEST_RESPONSE_INDEX int = 4
+const (
+	SEARCH_COLLECTION_INDEX = iota
+	COLLECTION_MENU_INDEX
+	HEADER_INDEX
+	REQUEST_HEADERS_INDEX
+	REQUEST_RESPONSE_INDEX
+)
 
 // Main TUI component.
 // encapsulate everything

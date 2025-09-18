@@ -1,6 +1,7 @@
 package request_header_box
 
 import (
+	"api-requester/domain/request"
 	"api-requester/shared/focusable"
 	cmds "api-requester/tui/commands"
 	"api-requester/tui/messages"
@@ -37,38 +38,52 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// USER PRESSED BUTTON TO SEND REQUEST
 	// CallRequestCmd from Button
 	case messages.ButtonPressedMsg:
+		// update request then send request
 		if msg.Action == ">>" && m.request != nil {
-			return m, cmds.CallRequestCmd(m.request)
+			return m, tea.Sequence(
+				cmds.UpdateRequestCmd(m.context, m.request.ID, m.request),
+				cmds.CallRequestCmd(m.request))
 		}
 
 	// USER PRESSED ENTER IN HEADER_COMPONENT
 	// UserPressEnterInRequestCmd from Header Component
 	case messages.LoadRequestMsg:
-		m.request = msg.Request
-		aux, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
-			messages.SendStringMsg{Value: msg.Request.Url})
-		m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
-		return m, cmd
+		return m, m.handleIncommingRequest(msg.Request)
 
 	// USER PRESSED ENTER IN COLLECTION_MENU
 	// SendRequestToTabCmd from Collection_menu
 	case messages.SendRequestMsg:
-		m.request = msg.Request
-		aux, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
-			messages.SendStringMsg{Value: msg.Request.Url})
-		m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
-		return m, cmd
+		return m, m.handleIncommingRequest(msg.Request)
 
 	// INITIAL CMD
 	// FETCHES METHODS FROM DB AND SEND TO SELECT COMPONENT
 	case messages.LoadMethodsMsg:
-		// do not return cmd back or program will get in infinite loop
+		// WARNING: do not return cmd back or program will get in infinite loop
 		aux, _ := m.subcomponents[SELECT_MENU_INDEX].Update(msg)
 		m.subcomponents[SELECT_MENU_INDEX] = aux.(focusable.Focusable)
 
+	// USER CHANGED REQUEST URL
+	// InputChangedCmd from Input_URL
 	case messages.InputChangedMsg:
 		m.request.Url = msg.Value
+
+	case messages.SendSelectValue:
+		m.request.Method_id = msg.Value.(int)
+		m.context.Logger.Println(m.request.Method_id)
 	}
 
 	return m, nil
+}
+
+func (m Model) handleIncommingRequest(req *request.Request) tea.Cmd {
+	m.request = req
+
+	aux, inputCmd := m.subcomponents[INPUT_URL_INDEX].Update(
+		messages.SendStringMsg{Value: req.Url})
+	m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
+
+	aux, selectCmd := m.subcomponents[SELECT_MENU_INDEX].Update(
+		messages.SendNumberMsg{Value: req.Method_id})
+	m.subcomponents[SELECT_MENU_INDEX] = aux.(focusable.Focusable)
+	return tea.Batch(inputCmd, selectCmd)
 }
