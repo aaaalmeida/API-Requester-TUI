@@ -1,6 +1,6 @@
 package messages
 
-type SendSelectValue struct {
+type SendSelectValueMsg struct {
 	Label string
 	Value any
 }

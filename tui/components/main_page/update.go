@@ -64,10 +64,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 
-		var cmd tea.Cmd
-		m.subcomponents[HEADER_INDEX], cmd = m.subcomponents[HEADER_INDEX].Update(msg)
-		m.subcomponents[REQUEST_HEADERS_INDEX], cmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
-		return m, cmd
+		var headerCmd, reqHeaderCmd tea.Cmd
+		m.subcomponents[HEADER_INDEX], headerCmd = m.subcomponents[HEADER_INDEX].Update(msg)
+		m.subcomponents[REQUEST_HEADERS_INDEX], reqHeaderCmd = m.subcomponents[REQUEST_HEADERS_INDEX].Update(msg)
+		return m, tea.Batch(headerCmd, reqHeaderCmd)
 
 	// SEND A REQUEST FROM HEADER TO MAIN MENU
 	case messages.LoadRequestMsg:

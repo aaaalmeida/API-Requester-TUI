@@ -30,6 +30,9 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			} else {
 				m.cursor--
 			}
+
+			// case "delete", "backspace":
+			// m.requests = append(m.requests, )
 		}
 
 		// USER PRESS ENTER IN COLLECTION MENU

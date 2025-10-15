@@ -63,21 +63,23 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.subcomponents[SELECT_MENU_INDEX] = aux.(focusable.Focusable)
 
 	// USER CHANGED REQUEST URL
-	// InputChangedCmd from Input_URL
+	// InputChangedCmd from input_url
 	case messages.InputChangedMsg:
 		m.request.Url = msg.Value
+		return m, cmds.UpdateRequestCmd(m.context, m.request)
 
-	case messages.SendSelectValue:
+	// USER CHANGED REQUEST METHOD
+	// UserPressEnterInSelectCmd from Select_menu
+	case messages.SendSelectValueMsg:
 		m.request.Method_id = msg.Value.(int)
-		m.context.Logger.Println(m.request.Method_id)
+		return m, cmds.UpdateRequestCmd(m.context, m.request)
 	}
 
 	return m, nil
 }
 
-func (m Model) handleIncommingRequest(req *request.Request) tea.Cmd {
+func (m *Model) handleIncommingRequest(req *request.Request) tea.Cmd {
 	m.request = req
-
 	aux, inputCmd := m.subcomponents[INPUT_URL_INDEX].Update(
 		messages.SendStringMsg{Value: req.Url})
 	m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)

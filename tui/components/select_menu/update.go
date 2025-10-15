@@ -1,7 +1,7 @@
 package select_menu
 
 import (
-	"api-requester/tui/commands"
+	cmds "api-requester/tui/commands"
 	"api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -16,7 +16,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// close menu
 				m.selectedItem = m.cursor
 				m.isOpened = false
-				return m, commands.UserPressEnterInSelect(m.Options[m.selectedItem])
+				return m, cmds.UserPressEnterInSelectCmd(m.Options[m.selectedItem])
 			} else {
 				// open menu
 				m.isOpened = true
@@ -32,7 +32,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		// INITIAL UPDATE
+	// INITIAL UPDATE
 	case messages.LoadMethodsMsg:
 		if msg.Err != nil {
 			//TODO: tratar erro
@@ -42,6 +42,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.Options = ConvertMethodsToSelectOptions(msg.Methods)
 		}
 
+	// USER FOCUSED OTHER REQUEST IN COLLECTION_MENU OR HEADER
 	case messages.SendNumberMsg:
 		if msg.Err != nil {
 			//TODO: tratar erro

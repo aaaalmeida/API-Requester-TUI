@@ -227,35 +227,52 @@ func UpdateRequest(ctx *context.AppContext, request_id int, request *Request) er
 	queryClauses := []string{}
 	args := []interface{}{}
 
-	if request.Name != "" {
+/*
+*	Update and saves request in db. This DOES NOT override uninformed values, only replaces new ones.
+*	ID, Collection_ID, Created_at and Updated_at will be ignored because this function is not mean
+*	to update then manually. Updated_at is automatic updated to local date time.
+ */
+func UpdateRequest(ctx *context.AppContext, request_id int, req *Request) error {
+	queryClauses := []string{}
+	args := []interface{}{}
+
+	if req.Name != "" {
 		queryClauses = append(queryClauses, "name = ?")
-		args = append(args, request.Name)
+		args = append(args, req.Name)
 	}
 
-	if request.Url != "" {
+	if req.Url != "" {
 		queryClauses = append(queryClauses, "url = ?")
-		args = append(args, request.Url)
+		args = append(args, req.Url)
 	}
 
-	if request.Method_id != 0 {
+	if req.Method_id != 0 {
 		queryClauses = append(queryClauses, "method_id = ?")
-		args = append(args, request.Method_id)
+		args = append(args, req.Method_id)
 	}
 
-	if request.Expected_Status_code != nil {
+	if req.Expected_Status_code != nil {
 		queryClauses = append(queryClauses, "status_code = ?")
-		args = append(args, request.Expected_Status_code)
+		args = append(args, &req.Expected_Status_code)
 	}
 
-	if request.Headers != nil {
+	if len(req.Headers) != 0 {
 		queryClauses = append(queryClauses, "headers = ?")
-		headers, _ := json.Marshal(request.Headers)
+		headers, err := json.Marshal(req.Headers)
+		if err != nil {
+			return err
+		}
 		args = append(args, headers)
 	}
 
-	if request.Body != nil {
+	if len(req.Body) != 0 {
 		queryClauses = append(queryClauses, "body = ?")
-		args = append(args, string(request.Body))
+		args = append(args, string(req.Body))
+		queryClauses = append(queryClauses, "body_type = ?")
+		args = append(args, req.BodyType)
+	} else {
+		queryClauses = append(queryClauses, "body_type = ?")
+		args = append(args, 0) // BodyTypeNull
 	}
 
 	if len(queryClauses) == 0 {
