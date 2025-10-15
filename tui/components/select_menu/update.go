@@ -1,6 +1,7 @@
 package select_menu
 
 import (
+	cmds "api-requester/tui/commands"
 	"api-requester/tui/messages"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,6 +15,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			if m.isOpened {
 				m.selectedItem = m.cursor
 				m.isOpened = false
+				return m, cmds.UserPressEnterInSelectCmd(m.Options[m.selectedItem])
 			} else {
 				m.isOpened = true
 			}
@@ -28,7 +30,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		}
 
-		// INITIAL UPDATE
+	// INITIAL UPDATE
 	case messages.LoadMethodsMsg:
 		if msg.Err != nil {
 			//TODO: tratar erro
@@ -37,6 +39,16 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.Options == nil {
 			m.Options = ConvertMethodsToSelectOptions(msg.Methods)
 		}
+
+	// USER FOCUSED OTHER REQUEST IN COLLECTION_MENU OR HEADER
+	case messages.SendNumberMsg:
+		if msg.Err != nil {
+			//TODO: tratar erro
+			m.ctx.Logger.Println(msg.Err)
+		}
+
+		// sqlite index start at 1, so we subtract from index
+		m.selectedItem = msg.Value - 1
 	}
 
 	return m, nil

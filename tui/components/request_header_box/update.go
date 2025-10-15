@@ -1,6 +1,7 @@
 package request_header_box
 
 import (
+	"api-requester/domain/request"
 	"api-requester/shared/focusable"
 	cmds "api-requester/tui/commands"
 	"api-requester/tui/messages"
@@ -44,20 +45,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// USER PRESSED ENTER IN HEADER_COMPONENT
 	// UserPressEnterInRequestCmd from Header Component
 	case messages.LoadRequestMsg:
-		m.request = msg.Request
-		aux, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
-			messages.SendStringMsg{Value: msg.Request.Url})
-		m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
-		return m, cmd
+		return m, m.handleIncommingRequest(msg.Request)
 
 	// USER PRESSED ENTER IN COLLECTION_MENU
 	// SendRequestToTabCmd from Collection_menu
 	case messages.SendRequestMsg:
-		m.request = msg.Request
-		aux, cmd := m.subcomponents[INPUT_URL_INDEX].Update(
-			messages.SendStringMsg{Value: msg.Request.Url})
-		m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
-		return m, cmd
+		return m, m.handleIncommingRequest(msg.Request)
 
 	// INITIAL CMD
 	// FETCHES METHODS FROM DB AND SEND TO SELECT COMPONENT
@@ -66,9 +59,30 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		aux, _ := m.subcomponents[SELECT_MENU_INDEX].Update(msg)
 		m.subcomponents[SELECT_MENU_INDEX] = aux.(focusable.Focusable)
 
+	// USER CHANGED REQUEST URL
+	// InputChangedCmd from input_url
 	case messages.InputChangedMsg:
 		m.request.Url = msg.Value
+		return m, cmds.UpdateRequestCmd(m.context, m.request)
+
+	// USER CHANGED REQUEST METHOD
+	// UserPressEnterInSelectCmd from Select_menu
+	case messages.SendSelectValueMsg:
+		m.request.Method_id = msg.Value.(int)
+		return m, cmds.UpdateRequestCmd(m.context, m.request)
 	}
 
 	return m, nil
+}
+
+func (m *Model) handleIncommingRequest(req *request.Request) tea.Cmd {
+	m.request = req
+	aux, inputCmd := m.subcomponents[INPUT_URL_INDEX].Update(
+		messages.SendStringMsg{Value: req.Url})
+	m.subcomponents[INPUT_URL_INDEX] = aux.(focusable.Focusable)
+
+	aux, selectCmd := m.subcomponents[SELECT_MENU_INDEX].Update(
+		messages.SendNumberMsg{Value: req.Method_id})
+	m.subcomponents[SELECT_MENU_INDEX] = aux.(focusable.Focusable)
+	return tea.Batch(inputCmd, selectCmd)
 }
